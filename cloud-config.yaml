@@ -1,0 +1,51 @@
+#cloud-config
+
+# See: https://cloudinit.readthedocs.io/en/latest/topics/examples.html
+
+
+
+# Add groups to the system
+groups:
+  - sdca
+
+
+# Add users to the system; users are added after groups are added
+users:
+  # A default user
+  - default
+  - name: sdca
+    gecos: SDCA service account
+    groups: users, sdca, sudo
+    shell: /bin/bash
+    sudo:
+      - ALL=(ALL) NOPASSWD:ALL
+  # Developer accounts
+  - name: martin
+    gecos: Martin
+    groups: users, sdca, sudo
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmTwFqFHKimZEv+LKATld8UJ6dv3rO5LcEHxvkd8fgwQTpq3toYEAnjLG/uznBYrjzno/h4Kf4XWwoEDtXyDg+2OazC51wWtOroXubtS0ruDg5XJcWEf3BZkMpu80jCuJ7P/zsz05jF26FHVN8FYxRcFv+7Q8ECeWgIBD90cdmOOAfIo2N5kgGogPE9KfPRa7b3zFKNvsIovCWHHq1l7pvehyufC0QcAZoZS7Y8A4xY7cLuU+UHZaY6BGEk+01a8A59s+AQZfZ+N642gz3jNgRnjEK7rKZCYtkHD1qWXbvcBFqRXE5WEJJdyOhNm85rHrnUP0kKa9fMsv2xMbVkNA3 mvl@pling
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCru6fW5JtJPphJ/kwSU1Bq3e4zCewwCA6Df/EvqEqRHGAalTjPrcE/hWJ9U2GSd9lpdK2nb50Mx59DQM3yP/moAvOwrnur4GXpYYajWbYrppx5b/qyN/G/3OkTVwldz4gvM6ocBYgY61Cjaz35naIO5WCfv65LrB6NYjYxcXhD5TGBl3KpKScyoL1s/hWHKJ1dr5CVG0g/QQ+bK07cxbr5RY8dKuarZWzYperWwYykA+RuC+MChrKg2qPzdp+8nU1iIiKOdbJc37D/BseiPXMo9mvqEbGT9mTgNQXuIkmALDzwveaUa+T4k4EDlTvHZPZofuB+SICyaJB4pOxXXEs9X6JqL2ZMVFV3SZTAc6Z2VLTon+A+hjBBgjNvaTGGH6Ii4owuMI1DOxfy3KuIef0iwFwdFsF1GS/v/QYLZd2kGTjxEzxzk0EzRiLJr/2Sotr+KBjw3ItXqxGRYPv7L3sqDbKun3LjdNgHImTUd+L0ZDMPqoV6kMwHZCyakQxg7diXyf372Bc0L6CDQ1gP+KK1GdVRSYEqpMnXhd4Yj5X8AjzciteXnLA0+hf+gfVjZ9yFc+yAjo7R6oEH2+Mywtj92pbMJO45SVBeBlupuixuOOYmBog+V78cVCqggJpjGpxO0tamdFpWG5zyr4PmH6tlqPT9/s6FODTGVPp8DQoEcQ== martin@lucas-smith.co.uk
+    sudo:
+      - ALL=(ALL) NOPASSWD:ALL
+
+
+# Run commands
+runcmd:
+ # Timezone
+ - timedatectl set-timezone Europe/London
+
+ # Set the ownership of the home folders
+ - chown -R sdca.sdca /home/sdca && chmod g+ws /home/sdca
+ - chown -R martin.martin /home/martin && chmod g+ws /home/martin
+
+ # Clone the repo, and set it to auto-update
+ - mkdir -p /opt/sdca-website-deploy
+ - chown sdca.sdca /opt/sdca-website-deploy && chmod g+ws /opt/sdca-website-deploy
+ - su --login sdca -c "git clone https://github.com/SDCA-tool/sdca-website-deploy.git /opt/sdca-website-deploy"
+ - su --login sdca -c "git config -f /opt/sdca-website-deploy/.git/config core.sharedRepository group"
+ - cp /opt/sdca-website-deploy/sdca-website-deploy-update.cron /etc/cron.d/sdca-website-deploy-update && chown root.root /etc/cron.d/sdca-website-deploy-update && chmod 0600 /etc/cron.d/sdca-website-deploy-update
+
+ # Run the installer
+ - su --login sdca -c "sudo /opt/sdca-website-deploy/install.sh"
