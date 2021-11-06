@@ -21,6 +21,12 @@ apt-get update
 # Webserver
 apt-get -y install apache2
 
+# PHP
+apt-get -y install php
+service apache2 restart
+
+# MySQL
+apt-get -y install mysql-server
 
 
 
