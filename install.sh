@@ -24,7 +24,8 @@ apt-get update
 apt-get -y install apache2
 
 # PHP
-apt-get -y install php
+apt-get -y install php php-cli php-mbstring
+apt-get -y install libapache2-mod-php
 service apache2 restart
 
 # MySQL
