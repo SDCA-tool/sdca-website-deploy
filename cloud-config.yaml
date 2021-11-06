@@ -48,4 +48,4 @@ runcmd:
  - cp /opt/sdca-website-deploy/sdca-website-deploy-update.cron /etc/cron.d/sdca-website-deploy-update && chown root.root /etc/cron.d/sdca-website-deploy-update && chmod 0600 /etc/cron.d/sdca-website-deploy-update
 
  # Run the installer
- - su --login sdca -c "sudo /opt/sdca-website-deploy/install.sh"
+ - /opt/sdca-website-deploy/install.sh
