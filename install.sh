@@ -28,6 +28,12 @@ service apache2 restart
 # MySQL
 apt-get -y install mysql-server
 
+# VirtualHost
+mkdir -p /var/www/sdca/
+cp apache-sdca.conf /etc/apache2/sites-available/sdca.conf
+a2ensite sdca.conf
+service apache2 restart
+
 
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 # Include dependencies for Munin MySQL plugins; see: https://raymii.org/s/snippets/Munin-Fix-MySQL-Plugin-on-Ubuntu-12.04.html
