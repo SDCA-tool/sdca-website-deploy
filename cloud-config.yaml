@@ -6,7 +6,7 @@
 
 # Add groups to the system
 groups:
-  - sdca
+  - rollout
 
 
 # Add users to the system; users are added after groups are added
@@ -15,14 +15,14 @@ users:
   - default
   - name: sdca
     gecos: SDCA service account
-    groups: users, sdca, sudo
+    groups: users, rollout, sudo
     shell: /bin/bash
     sudo:
       - ALL=(ALL) NOPASSWD:ALL
   # Developer accounts
   - name: martin
     gecos: Martin
-    groups: users, sdca, sudo
+    groups: users, rollout, sudo
     shell: /bin/bash
     ssh_authorized_keys:
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmTwFqFHKimZEv+LKATld8UJ6dv3rO5LcEHxvkd8fgwQTpq3toYEAnjLG/uznBYrjzno/h4Kf4XWwoEDtXyDg+2OazC51wWtOroXubtS0ruDg5XJcWEf3BZkMpu80jCuJ7P/zsz05jF26FHVN8FYxRcFv+7Q8ECeWgIBD90cdmOOAfIo2N5kgGogPE9KfPRa7b3zFKNvsIovCWHHq1l7pvehyufC0QcAZoZS7Y8A4xY7cLuU+UHZaY6BGEk+01a8A59s+AQZfZ+N642gz3jNgRnjEK7rKZCYtkHD1qWXbvcBFqRXE5WEJJdyOhNm85rHrnUP0kKa9fMsv2xMbVkNA3 mvl@pling
@@ -42,7 +42,7 @@ runcmd:
 
  # Clone the repo, and set it to auto-update
  - mkdir -p /opt/sdca-website-deploy
- - chown sdca.sdca /opt/sdca-website-deploy && chmod g+ws /opt/sdca-website-deploy
+ - chown sdca.rollout /opt/sdca-website-deploy && chmod g+ws /opt/sdca-website-deploy
  - su --login sdca -c "git clone https://github.com/SDCA-tool/sdca-website-deploy.git /opt/sdca-website-deploy"
  - su --login sdca -c "git config -f /opt/sdca-website-deploy/.git/config core.sharedRepository group"
  - cp /opt/sdca-website-deploy/sdca-website-deploy-update.cron /etc/cron.d/sdca-website-deploy-update && chown root.root /etc/cron.d/sdca-website-deploy-update && chmod 0600 /etc/cron.d/sdca-website-deploy-update
