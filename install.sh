@@ -14,6 +14,8 @@ fi
 # Bomb out if something goes wrong
 set -e
 
+# Get the script directory see: https://stackoverflow.com/a/337006/180733
+DIR=`dirname $0`
 
 # Update packages index
 apt-get update
@@ -30,7 +32,7 @@ apt-get -y install mysql-server
 
 # VirtualHost
 mkdir -p /var/www/sdca/
-cp apache-sdca.conf /etc/apache2/sites-available/sdca.conf
+cp "${DIR}/apache-sdca.conf" /etc/apache2/sites-available/sdca.conf
 a2ensite sdca.conf
 service apache2 restart
 
