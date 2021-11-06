@@ -45,6 +45,20 @@ apt-get install -y munin-plugins-extra
 munin-node-configure --suggest --shell | sh
 service munin-node restart
 
+# Add firewall
+# https://help.ubuntu.com/community/UFW
+# Check status using: sudo ufw status verbose
+apt-get -y install ufw
+ufw logging low
+ufw --force reset
+ufw --force enable
+ufw default deny
+ufw allow ssh
+ufw allow http
+ufw allow https
+ufw reload
+ufw status verbose
+
 # Patch system
 apt-get -y upgrade
 apt-get -y dist-upgrade
