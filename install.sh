@@ -33,7 +33,8 @@ apt-get -y install mysql-server
 
 # Tippecanoe, for tile generation; see: https://github.com/mapbox/tippecanoe
 apt-get -y install build-essential libsqlite3-dev zlib1g-dev
-if [ ! command -v tippecanoe &> /dev/null ]; then
+if ! which tippecanoe >/dev/null; then
+	echo 'Installing tippecanoe'
 	cd /tmp/
 	git clone https://github.com/mapbox/tippecanoe.git
 	cd tippecanoe
