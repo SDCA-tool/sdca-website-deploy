@@ -41,8 +41,8 @@ if ! which tippecanoe >/dev/null; then
 	cd tippecanoe
 	make -j
 	make install
-	cd "${DIR}/"
 	rm -rf /tmp/tippecanoe/
+	cd "${DIR}/"
 fi
 
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
