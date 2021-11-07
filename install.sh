@@ -33,6 +33,7 @@ apt-get -y install mysql-server
 
 # VirtualHost
 mkdir -p /var/www/sdca/
+chown sdca.rollout /var/www/sdca/ && chmod g+ws /var/www/sdca/
 cp "${DIR}/apache-sdca.conf" /etc/apache2/sites-available/sdca.conf
 a2ensite sdca.conf
 service apache2 restart
