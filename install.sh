@@ -31,13 +31,6 @@ service apache2 restart
 # MySQL
 apt-get -y install mysql-server
 
-# VirtualHost
-mkdir -p /var/www/sdca/
-chown sdca.rollout /var/www/sdca/ && chmod g+ws /var/www/sdca/
-cp "${DIR}/apache-sdca.conf" /etc/apache2/sites-available/sdca.conf
-a2ensite sdca.conf
-service apache2 restart
-
 # Tippecanoe, for tile generation; see: https://github.com/mapbox/tippecanoe
 apt-get -y install build-essential libsqlite3-dev zlib1g-dev
 if [ ! command -v tippecanoe &> /dev/null ]; then
@@ -78,3 +71,12 @@ ufw status verbose
 apt-get -y upgrade
 apt-get -y dist-upgrade
 apt-get -y autoremove
+
+# Site main directory, into which repos will go
+mkdir -p /var/www/sdca/
+chown sdca.rollout /var/www/sdca/ && chmod g+ws /var/www/sdca/
+
+# VirtualHost
+cp "${DIR}/apache-sdca.conf" /etc/apache2/sites-available/sdca.conf
+a2ensite sdca.conf
+service apache2 restart
