@@ -14,8 +14,8 @@ fi
 # Bomb out if something goes wrong
 set -e
 
-# Get the script directory see: https://stackoverflow.com/a/337006/180733
-DIR=`dirname $0`
+# Get the script directory see: https://stackoverflow.com/a/11114547/180733
+DIR=$(dirname $(realpath -s $0))
 
 # Update packages index
 apt-get update
@@ -39,7 +39,7 @@ if [ ! command -v tippecanoe &> /dev/null ]; then
 	cd tippecanoe
 	make -j
 	make install
-	cd "${DIR}"
+	cd "${DIR}/"
 	rm -rf /tmp/tippecanoe/
 fi
 
