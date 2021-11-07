@@ -40,13 +40,15 @@ service apache2 restart
 
 # Tippecanoe, for tile generation; see: https://github.com/mapbox/tippecanoe
 apt-get -y install build-essential libsqlite3-dev zlib1g-dev
-cd /tmp/
-git clone https://github.com/mapbox/tippecanoe.git
-cd tippecanoe
-make -j
-make install
-cd "${DIR}"
-rm -rf /tmp/tippecanoe/
+if [ ! command -v tippecanoe &> /dev/null ]; then
+	cd /tmp/
+	git clone https://github.com/mapbox/tippecanoe.git
+	cd tippecanoe
+	make -j
+	make install
+	cd "${DIR}"
+	rm -rf /tmp/tippecanoe/
+fi
 
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 # Include dependencies for Munin MySQL plugins; see: https://raymii.org/s/snippets/Munin-Fix-MySQL-Plugin-on-Ubuntu-12.04.html
