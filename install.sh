@@ -91,7 +91,11 @@ if [ ! -d /var/www/sdca/Mapboxgljs.LayerViewer/ ]; then
 	chown -R sdca.rollout /var/www/sdca/Mapboxgljs.LayerViewer/ && chmod -R g+ws /var/www/sdca/Mapboxgljs.LayerViewer/
 fi
 
-# Keep the main site repo updated
+# Add data directory
+mkdir -p /var/www/sdca/data/
+chown -R sdca.rollout /var/www/sdca/data/ && chmod -R g+ws /var/www/sdca/data/
+
+# Keep the repos updated
 cp /opt/sdca-website-deploy/sdca-website-update.cron /etc/cron.d/sdca-website-update
 chown root.root /etc/cron.d/sdca-website-update && chmod 0600 /etc/cron.d/sdca-website-update
 
