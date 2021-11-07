@@ -104,3 +104,7 @@ chown root.root /etc/cron.d/sdca-website-update && chmod 0600 /etc/cron.d/sdca-w
 cp "${DIR}/apache-sdca.conf" /etc/apache2/sites-available/sdca.conf
 a2ensite sdca.conf
 service apache2 restart
+
+# Build data
+su - sdca "${DIR}/build-data.sh"
+
