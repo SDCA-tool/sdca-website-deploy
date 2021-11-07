@@ -83,6 +83,13 @@ if [ ! -d /var/www/sdca/sdca-website/ ]; then
 	chown -R sdca.rollout /var/www/sdca/sdca-website/ && chmod -R g+ws /var/www/sdca/sdca-website/
 fi
 
+# Add library repo
+if [ ! -d /var/www/sdca/Mapboxgljs.LayerViewer/ ]; then
+	cd /var/www/sdca/
+	git clone https://github.com/cyclestreets/Mapboxgljs.LayerViewer.git
+	chown -R sdca.rollout /var/www/sdca/Mapboxgljs.LayerViewer/ && chmod -R g+ws /var/www/sdca/Mapboxgljs.LayerViewer/
+fi
+
 # Keep the main site repo updated
 cp /opt/sdca-website-deploy/sdca-website-update.cron /etc/cron.d/sdca-website-update
 chown root.root /etc/cron.d/sdca-website-update && chmod 0600 /etc/cron.d/sdca-website-update
