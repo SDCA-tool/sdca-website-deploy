@@ -23,6 +23,7 @@ apt-get update
 # Webserver
 apt-get -y install apache2
 a2enmod rewrite
+a2enmod headers
 
 # PHP
 apt-get -y install php php-cli php-mbstring
