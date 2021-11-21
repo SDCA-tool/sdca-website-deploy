@@ -21,20 +21,20 @@ DIR=$(dirname $(realpath -s $0))
 apt-get update
 
 # Webserver
-apt-get -y install apache2
+apt-get install -y apache2
 a2enmod rewrite
 a2enmod headers
 
 # PHP
-apt-get -y install php php-cli php-mbstring
-apt-get -y install libapache2-mod-php
+apt-get install -y php php-cli php-mbstring
+apt-get install -y libapache2-mod-php
 service apache2 restart
 
 # MySQL
-apt-get -y install mysql-server
+apt-get install -y mysql-server
 
 # Tippecanoe, for tile generation; see: https://github.com/mapbox/tippecanoe
-apt-get -y install build-essential libsqlite3-dev zlib1g-dev
+apt-get install -y build-essential libsqlite3-dev zlib1g-dev
 if ! which tippecanoe >/dev/null; then
 	echo 'Installing tippecanoe'
 	cd /tmp/
@@ -59,7 +59,7 @@ service munin-node restart
 # Add firewall
 # https://help.ubuntu.com/community/UFW
 # Check status using: sudo ufw status verbose
-apt-get -y install ufw
+apt-get install -y ufw
 ufw logging low
 ufw --force reset
 ufw --force enable
