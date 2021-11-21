@@ -105,7 +105,7 @@ mkdir -p /var/www/sdca/data/
 chown -R sdca.rollout /var/www/sdca/data/ && chmod -R g+ws /var/www/sdca/data/
 
 # Keep the repos updated
-cp /opt/sdca-website-deploy/sdca-website-update.cron /etc/cron.d/sdca-website-update
+cp /var/www/sdca/sdca-website-deploy/sdca-website-update.cron /etc/cron.d/sdca-website-update
 chown root.root /etc/cron.d/sdca-website-update && chmod 0600 /etc/cron.d/sdca-website-update
 
 # VirtualHost

@@ -41,11 +41,11 @@ runcmd:
  - chown -R martin.martin /home/martin && chmod g+ws /home/martin
 
  # Clone the repo, and set it to auto-update
- - mkdir -p /opt/sdca-website-deploy
- - chown sdca.rollout /opt/sdca-website-deploy && chmod g+ws /opt/sdca-website-deploy
- - su --login sdca -c "git clone https://github.com/SDCA-tool/sdca-website-deploy.git /opt/sdca-website-deploy"
- - su --login sdca -c "git config -f /opt/sdca-website-deploy/.git/config core.sharedRepository group"
- - cp /opt/sdca-website-deploy/sdca-website-deploy-update.cron /etc/cron.d/sdca-website-deploy-update && chown root.root /etc/cron.d/sdca-website-deploy-update && chmod 0600 /etc/cron.d/sdca-website-deploy-update
+ - mkdir -p /var/www/sdca/sdca-website-deploy
+ - chown sdca.rollout /var/www/sdca/ && chmod g+ws /var/www/sdca/
+ - su --login sdca -c "git clone https://github.com/SDCA-tool/sdca-website-deploy.git /var/www/sdca/sdca-website-deploy"
+ - su --login sdca -c "git config -f /var/www/sdca/sdca-website-deploy/.git/config core.sharedRepository group"
+ - cp /var/www/sdca/sdca-website-deploy/sdca-website-deploy-update.cron /etc/cron.d/sdca-website-deploy-update && chown root.root /etc/cron.d/sdca-website-deploy-update && chmod 0600 /etc/cron.d/sdca-website-deploy-update
 
  # Run the installer
- - /opt/sdca-website-deploy/install.sh
+ - /var/www/sdca/sdca-website-deploy/install.sh
