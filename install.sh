@@ -114,5 +114,5 @@ a2ensite sdca.conf
 service apache2 restart
 
 # Build data
-su - sdca "${DIR}/build-data.sh"
+su - sdca "${DIR}/build-data.sh /var/www/sdca/sdca-data/"
 

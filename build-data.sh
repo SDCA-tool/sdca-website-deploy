@@ -5,6 +5,10 @@
 # See examples at: https://github.com/creds2/CarbonCalculator/blob/master/tippercanoe
 
 
+# Can specify argument giving path to data repo; defaults as shown
+dataRepo=${1:-/var/www/sdca/sdca-data/}
+
+
 # Do work in /tmp/
 cd /tmp/
 
