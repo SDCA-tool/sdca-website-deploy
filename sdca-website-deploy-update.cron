@@ -1,3 +1,0 @@
-# Update repo regularly from Git
-0,15,30,45 *  * * *  sdca  cd /var/www/sdca/sdca-website-deploy/ && git pull --quiet
-

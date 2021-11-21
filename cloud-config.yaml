@@ -45,7 +45,6 @@ runcmd:
  - chown sdca.rollout /var/www/sdca/ && chmod g+ws /var/www/sdca/
  - su --login sdca -c "git clone https://github.com/SDCA-tool/sdca-website-deploy.git /var/www/sdca/sdca-website-deploy"
  - su --login sdca -c "git config -f /var/www/sdca/sdca-website-deploy/.git/config core.sharedRepository group"
- - cp /var/www/sdca/sdca-website-deploy/sdca-website-deploy-update.cron /etc/cron.d/sdca-website-deploy-update && chown root.root /etc/cron.d/sdca-website-deploy-update && chmod 0600 /etc/cron.d/sdca-website-deploy-update
 
  # Run the installer
  - /var/www/sdca/sdca-website-deploy/install.sh
