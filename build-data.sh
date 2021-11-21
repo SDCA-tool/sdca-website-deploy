@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Builds vector tile data for the site
 # See tutorial at: https://github.com/ITSLeeds/VectorTiles
@@ -9,11 +9,41 @@
 dataRepo=${1:-/var/www/sdca/sdca-data/}
 
 
+# Stop on any error
+set -e
+
+# Get the list of datasets
+datasets=`csvtool col 2 $dataRepo/datasets.csv`
+
 # Do work in /tmp/
-cd /tmp/
+rm -rf /tmp/sdca/
+mkdir -p /tmp/sdca/
+cd /tmp/sdca/
 
 # Specify output data folder
 OUTPUT=/var/www/sdca/data/
+
+# Loop through datasets; see: https://unix.stackexchange.com/a/622269/168900
+csvtool namedcol id,zipfile $dataRepo/datasets.csv | csvtool -u TAB drop 1 - | while IFS=$'\t' read -r id zipfile; do
+
+	# # Download - public repo
+	# wget "https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
+	
+	# Download - private repo, which requires use of the Github API; see: https://stackoverflow.com/a/51427434/180733 and https://stackoverflow.com/a/60061148/180733
+	# Requires environment variable, e.g. export GITHUB_CREDENTIALS=username:tokenstring
+	CURL="curl -u $GITHUB_CREDENTIALS https://api.github.com/repos/SDCA-tool/sdca-data/releases"
+	ASSET_ID=$(eval "$CURL/latest" | jq -r '.assets[] | select(.name=="'$zipfile'").id')
+	eval "$CURL/assets/$ASSET_ID -LJOH 'Accept: application/octet-stream'"
+	
+	# Unzip
+	unzip $zipfile
+	rm $zipfile
+	
+done
+
+
+exit
+
 
 # Public transport stops
 wget https://github.com/creds2/CarbonCalculator/releases/download/1.0/PBCC_transit_stop_frequency_2020.zip

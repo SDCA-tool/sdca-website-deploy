@@ -113,6 +113,12 @@ cp "${DIR}/apache-sdca.conf" /etc/apache2/sites-available/sdca.conf
 a2ensite sdca.conf
 service apache2 restart
 
+# Add packages for helping download data
+# CSV support for use in scripts; see: https://colin.maudry.fr/csvtool-manual-page/
+apt-get install -y csvtool
+apt-get install -y curl
+apt-get install -y jq
+
 # Build data
 su - sdca "${DIR}/build-data.sh /var/www/sdca/sdca-data/"
 
