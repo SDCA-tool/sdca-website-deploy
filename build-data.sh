@@ -2,7 +2,7 @@
 
 # Builds vector tile data for the site
 # See tutorial at: https://github.com/ITSLeeds/VectorTiles
-# See examples at: https://github.com/creds2/CarbonCalculator/blob/master/tippercanoe
+# See examples at: https://github.com/SDCA-tool/sdca-data-prep/blob/main/tippecanoe
 
 
 # Can specify argument giving path to data repo; defaults as shown
@@ -24,7 +24,8 @@ cd /tmp/sdca/
 OUTPUT=/var/www/sdca/data/
 
 # Loop through datasets; see: https://unix.stackexchange.com/a/622269/168900
-csvtool namedcol id,zipfile $dataRepo/datasets.csv | csvtool -u TAB drop 1 - | while IFS=$'\t' read -r id zipfile; do
+# Data at: https://github.com/SDCA-tool/sdca-data/releases
+csvtool namedcol id,zipfile,title,description,tippecanoeparams $dataRepo/datasets.csv | csvtool -u TAB drop 1 - | while IFS=$'\t' read -r id zipfile title description tippecanoeparams; do
 
 	# # Download - public repo
 	# wget "https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
@@ -38,6 +39,13 @@ csvtool namedcol id,zipfile $dataRepo/datasets.csv | csvtool -u TAB drop 1 - | w
 	# Unzip
 	unzip $zipfile
 	rm $zipfile
+	
+	# Process data
+	if [ -n "$tippecanoeparams" ]; then
+		tippecanoe --output-to-directory=$id $tippecanoeparams --force $id.geojson
+		mv $id "${OUTPUT}/"
+		rm $id.geojson
+	fi
 	
 done
 
