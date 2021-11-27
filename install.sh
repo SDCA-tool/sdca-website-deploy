@@ -22,8 +22,10 @@ apt-get update
 
 # Webserver
 apt-get install -y apache2
+a2enmod ssl
 a2enmod rewrite
 a2enmod headers
+apt-get install -y certbot
 
 # PHP
 apt-get install -y php php-cli php-mbstring
@@ -108,9 +110,14 @@ chown root.root /etc/cron.d/sdca && chmod 0600 /etc/cron.d/sdca
 mkdir -p /var/www/sdca/data/
 chown -R sdca.rollout /var/www/sdca/data/ && chmod -R g+ws /var/www/sdca/data/
 
-# VirtualHost
+# VirtualHosts - enable HTTP site, add SSL cert, enable HTTPS site
 cp "${DIR}/apache-sdca.conf" /etc/apache2/sites-available/sdca.conf
+cp "${DIR}/apache-sdca_ssl.conf" /etc/apache2/sites-available/sdca_ssl.conf
 a2ensite sdca.conf
+service apache2 restart
+email='webmaster''@''carbon.place'		# Split in script to prevent bots
+certbot --agree-tos --no-eff-email certonly --keep-until-expiring --webroot -w /var/www/sdca/sdca-website/ --email $email -d dev.carbon.place
+a2ensite sdca_ssl.conf
 service apache2 restart
 
 # Add packages for helping download data
