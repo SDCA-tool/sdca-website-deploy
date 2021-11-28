@@ -16,9 +16,10 @@ set -e
 datasets=`csvtool col 2 $dataRepo/datasets.csv`
 
 # Do work in /tmp/
-rm -rf /tmp/sdca/
-mkdir -p /tmp/sdca/
-cd /tmp/sdca/
+rm -rf /tmp/sdca-data-importing/
+mkdir -p /tmp/sdca-data-importing/
+cd /tmp/sdca-data-importing/
+echo 'This folder is safe to delete. See sdca-website-deploy repo: build-data.sh .' > /tmp/sdca-data-importing/README.txt
 
 # Specify output data folder
 OUTPUT=/var/www/sdca/data/
