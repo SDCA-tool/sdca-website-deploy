@@ -129,3 +129,6 @@ apt-get install -y jq
 # Build data
 su - sdca "${DIR}/build-data.sh /var/www/sdca/sdca-data/"
 
+# Add dataset metadata as JSON file for website
+apt-get install -y python3 python-is-python3
+cat /var/www/sdca/sdca-data/datasets.csv | python -c 'import csv, json, sys; print(json.dumps([dict(r) for r in csv.DictReader(sys.stdin)], indent="\t"))' | cat > /var/www/sdca/sdca-website/datasets.json
