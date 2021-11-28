@@ -3,3 +3,6 @@
 0,15,30,45 *  * * *  sdca  cd /var/www/sdca/sdca-data/ && git pull --quiet
 0,15,30,45 *  * * *  sdca  cd /var/www/sdca/sdca-website/ && git pull --quiet
 0,15,30,45 *  * * *  sdca  cd /var/www/sdca/Mapboxgljs.LayerViewer/ && git pull --quiet
+
+# Build the data regularly
+0 4  * * *  sdca  /var/www/sdca/sdca-website-deploy/build-data.sh

@@ -129,4 +129,4 @@ apt-get install -y zip
 apt-get install -y python3 python-is-python3
 
 # Build data
-su - sdca "${DIR}/build-data.sh /var/www/sdca/sdca-data/"
+su - sdca "${DIR}/build-data.sh"
