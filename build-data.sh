@@ -28,6 +28,8 @@ OUTPUT=/var/www/sdca/data/
 csvtool namedcol id,zipfile,title,description,has_attributes,source,source_url,tippecanoeparams $dataRepo/datasets.csv \
  | csvtool -u '|' drop 1 - \
  | while IFS=$'|' read -r id zipfile title description has_attributes source source_url tippecanoeparams; do
+	
+	echo -e "\n\nProcessing dataset ${id}:\n"
 
 	# # Download - public repo
 	# wget "https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
