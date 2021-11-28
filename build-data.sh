@@ -45,6 +45,7 @@ csvtool namedcol id,zipfile,title,description,has_attributes,source,source_url,t
 	# Process data
 	if [ -n "$tippecanoeparams" ]; then
 		tippecanoe --output-to-directory=$id $tippecanoeparams --force $id.geojson
+		rm -rf "${OUTPUT}/${id}/"		# Remove existing directory if present from a previous run; this is done just before the move to minimise public unavailability
 		mv $id "${OUTPUT}/"
 		rm $id.geojson
 	fi
