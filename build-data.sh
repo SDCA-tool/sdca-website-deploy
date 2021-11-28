@@ -54,3 +54,5 @@ csvtool namedcol id,zipfile,title,description,has_attributes,source,source_url,t
 	
 done
 
+# Add dataset metadata as JSON file for website
+cat $dataRepo/datasets.csv | python -c 'import csv, json, sys; print(json.dumps([dict(r) for r in csv.DictReader(sys.stdin)], indent="\t"))' | cat > /var/www/sdca/sdca-website/datasets.json

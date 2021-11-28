@@ -120,15 +120,12 @@ certbot --agree-tos --no-eff-email certonly --keep-until-expiring --webroot -w /
 a2ensite sdca_ssl.conf
 service apache2 restart
 
-# Add packages for helping download data
+# Add packages for helping download and process datasets
 # CSV support for use in scripts; see: https://colin.maudry.fr/csvtool-manual-page/
 apt-get install -y csvtool
 apt-get install -y curl
 apt-get install -y jq
+apt-get install -y python3 python-is-python3
 
 # Build data
 su - sdca "${DIR}/build-data.sh /var/www/sdca/sdca-data/"
-
-# Add dataset metadata as JSON file for website
-apt-get install -y python3 python-is-python3
-cat /var/www/sdca/sdca-data/datasets.csv | python -c 'import csv, json, sys; print(json.dumps([dict(r) for r in csv.DictReader(sys.stdin)], indent="\t"))' | cat > /var/www/sdca/sdca-website/datasets.json
