@@ -45,13 +45,14 @@ csvtool namedcol id,zipfile,title,description,has_attributes,source,source_url,t
 	unzip $zipfile
 	rm $zipfile
 	
-	# Process data
-	if [ -n "$tippecanoeparams" ]; then
-		tippecanoe --output-to-directory=$id $tippecanoeparams --force $id.geojson
-		rm -rf "${OUTPUT}/${id}/"		# Remove existing directory if present from a previous run; this is done just before the move to minimise public unavailability
-		mv $id "${OUTPUT}/"
-		rm $id.geojson
+	# Process data, using default parameters for Tippecanoe if not specified
+	if [ -z "$tippecanoeparams" ]; then
+		tippecanoeparams="--name=${id} --layer=${id} --attribution='${source}' --maximum-zoom=13 --minimum-zoom=0 --drop-smallest-as-needed --simplification=10 --detect-shared-borders";
 	fi
+	tippecanoe --output-to-directory=$id "${tippecanoeparams}" --force $id.geojson
+	rm -rf "${OUTPUT}/${id}/"		# Remove existing directory if present from a previous run; this is done just before the move to minimise public unavailability
+	mv $id "${OUTPUT}/"
+	rm $id.geojson
 	
 done
 
