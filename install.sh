@@ -125,6 +125,7 @@ service apache2 restart
 apt-get install -y csvtool
 apt-get install -y curl
 apt-get install -y jq
+apt-get install -y zip
 apt-get install -y python3 python-is-python3
 
 # Build data
