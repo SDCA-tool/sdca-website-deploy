@@ -7,6 +7,7 @@
 
 # Can specify argument giving path to data repo; defaults as shown
 dataRepo=${1:-/var/www/sdca/sdca-data/}
+dataTarget=${2:-/var/www/sdca/data/}
 
 
 # Stop on any error
@@ -22,7 +23,7 @@ cd /tmp/sdca-data-importing/
 echo 'This folder is safe to delete. See sdca-website-deploy repo: build-data.sh .' > /tmp/sdca-data-importing/README.txt
 
 # Specify output data folder
-OUTPUT=/var/www/sdca/data/
+OUTPUT=$dataTarget
 
 # Loop through datasets; see: https://unix.stackexchange.com/a/622269/168900
 # Data at: https://github.com/SDCA-tool/sdca-data/releases
