@@ -121,7 +121,7 @@ a2ensite sdca_ssl.conf
 service apache2 restart
 
 # Add packages for helping download and process datasets
-# CSV support for use in scripts; see: https://colin.maudry.fr/csvtool-manual-page/
+# CSV support for use in scripts; see: https://colin.maudry.fr/csvtool-manual-page/ and install instructions for Ubuntu/MacOS at https://thinkinginsoftware.blogspot.com/2018/03/parsing-csv-from-bash.html
 apt-get install -y csvtool
 apt-get install -y curl
 apt-get install -y jq
