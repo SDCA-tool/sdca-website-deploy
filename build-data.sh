@@ -60,3 +60,10 @@ done
 # Add dataset metadata as JSON file for website
 csvToJson () { python -c 'import csv, json, sys; print(json.dumps([dict(r) for r in csv.DictReader(sys.stdin)], indent="\t"))'; }
 cat $dataRepo/datasets.csv | csvToJson | cat > /var/www/sdca/sdca-website/datasets.json
+
+# Add field definitions from each file as a (single) JSON file for website
+for file in $dataRepo/data_dictionary/*.csv; do
+    cat $file | csvToJson | cat > "${file%.csv}.json"
+done
+jq -n '[inputs | {(input_filename | gsub(".*/|\\.json$";"")): .} ] | add' $dataRepo/data_dictionary/*.json | cat > /var/www/sdca/sdca-website/fields.json
+rm $dataRepo/data_dictionary/*.json
