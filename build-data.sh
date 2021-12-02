@@ -27,9 +27,9 @@ OUTPUT=$dataTarget
 
 # Loop through datasets; see: https://unix.stackexchange.com/a/622269/168900
 # Data at: https://github.com/SDCA-tool/sdca-data/releases
-csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,source,source_url,tippecanoeparams $dataRepo/datasets.csv \
+csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,source,source_url,tippecanoeparams,show $dataRepo/datasets.csv \
  | csvtool -u '|' drop 1 - \
- | while IFS=$'|' read -r id zipfile title description geometries_type has_attributes source source_url tippecanoeparams; do
+ | while IFS=$'|' read -r id zipfile title description geometries_type has_attributes source source_url tippecanoeparams show; do
 	
 	echo -e "\n\nProcessing dataset ${id}:\n"
 
