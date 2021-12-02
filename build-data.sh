@@ -58,4 +58,5 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 done
 
 # Add dataset metadata as JSON file for website
-cat $dataRepo/datasets.csv | python -c 'import csv, json, sys; print(json.dumps([dict(r) for r in csv.DictReader(sys.stdin)], indent="\t"))' | cat > /var/www/sdca/sdca-website/datasets.json
+csvToJson () { python -c 'import csv, json, sys; print(json.dumps([dict(r) for r in csv.DictReader(sys.stdin)], indent="\t"))'; }
+cat $dataRepo/datasets.csv | csvToJson | cat > /var/www/sdca/sdca-website/datasets.json
