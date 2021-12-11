@@ -148,6 +148,9 @@ if ! command -v mysqlx &> /dev/null ; then
 	
 	# Amend MySQL password validation as passwords will already be complex
 	mysql -u root -p"${rootmysqlpassword}" -e "SET GLOBAL validate_password.special_char_count = 0;"
+	
+	# Create database
+	mysql -u root -p"${rootmysqlpassword}" -e "CREATE DATABASE IF NOT EXISTS sdca;"
 fi
 
 
