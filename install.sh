@@ -142,6 +142,12 @@ if ! command -v mysqlx &> /dev/null ; then
 	
 	# Secure the installation
 	mysql_secure_installation -u root --password="${rootmysqlpassword}" --use-default
+	
+	# Disable MySQL password expiry system; see: http://stackoverflow.com/a/41552022
+	mysql -u root -p"${rootmysqlpassword}" -e "SET GLOBAL default_password_lifetime = 0;"
+	
+	# Amend MySQL password validation as passwords will already be complex
+	mysql -u root -p"${rootmysqlpassword}" -e "SET GLOBAL validate_password.special_char_count = 0;"
 fi
 
 
