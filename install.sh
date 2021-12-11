@@ -151,8 +151,15 @@ if ! command -v mysqlx &> /dev/null ; then
 	
 	# Create database
 	mysql -u root -p"${rootmysqlpassword}" -e "CREATE DATABASE IF NOT EXISTS sdca;"
+	
+	# Create runtime user
+	sdcamysqlpassword=`date +%s | sha256sum | base64 | head -c 32`
+	echo "${sdcamysqlpassword}" > /home/sdca/mysqlpassword
+	chown sdca.sdca /home/sdca/mysqlpassword
+	chmod 400 /home/sdca/mysqlpassword
+	mysql -u root -p"${rootmysqlpassword}" -e "CREATE USER IF NOT EXISTS sdca@localhost IDENTIFIED WITH mysql_native_password BY '${sdcamysqlpassword}';"
+	mysql -u root -p"${rootmysqlpassword}" -e "GRANT SELECT ON sdca.* TO sdca@localhost;"
 fi
-
 
 # Build data
 su - sdca "${DIR}/build-data.sh"
