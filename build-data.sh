@@ -32,7 +32,13 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
  | while IFS=$'|' read -r id zipfile title description geometries_type has_attributes source source_url tippecanoeparams show; do
 	
 	echo -e "\n\nProcessing dataset ${id}:\n"
-
+	
+	# Skip files not to show
+	if [[ "$show" == 'FALSE' ]]; then
+		echo "Skipping as not shown"
+		continue
+	fi
+	
 	# # Download - public repo
 	# wget "https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
 	
