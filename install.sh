@@ -129,12 +129,14 @@ apt-get install -y zip
 apt-get install -y python3 python-is-python3
 
 # Database - MySQL 8
-mysqlpassword=`date +%s | sha256sum | base64 | head -c 32`
-echo "${mysqlpassword}" > /root/mysqlpassword
-chmod 400 /root/mysqlpassword
-apt-get install -y mysql-server mysql-client
-mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${mysqlpassword}';"
-mysql_secure_installation -u root --password="${mysqlpassword}" --use-default
+if ! command -v mysqlx &> /dev/null ; then
+	mysqlpassword=`date +%s | sha256sum | base64 | head -c 32`
+	echo "${mysqlpassword}" > /root/mysqlpassword
+	chmod 400 /root/mysqlpassword
+	apt-get install -y mysql-server mysql-client
+	mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${mysqlpassword}';"
+	mysql_secure_installation -u root --password="${mysqlpassword}" --use-default
+fi
 
 # Build data
 su - sdca "${DIR}/build-data.sh"
