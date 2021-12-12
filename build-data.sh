@@ -33,12 +33,6 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 	
 	echo -e "\n\nProcessing dataset ${id}:\n"
 	
-	# Skip files not to show
-	if [[ "$show" == 'FALSE' ]]; then
-		echo "Skipping as not shown"
-		continue
-	fi
-	
 	# # Download - public repo
 	# wget "https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
 	
@@ -52,14 +46,20 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 	unzip $zipfile
 	rm $zipfile
 	
-	# Process data, using default parameters for Tippecanoe if not specified
-	if [ -z "$tippecanoeparams" ]; then
-		tippecanoeparams="--name=${id} --layer=${id} --attribution='${source}' --maximum-zoom=13 --minimum-zoom=0 --drop-smallest-as-needed --simplification=10 --detect-shared-borders";
+	# Skip vector tile creation for layers not to be shown
+	if [[ "$show" == 'FALSE' ]]; then
+		echo "Skipping vector tile creation of dataset ${id} as not shown"
+		continue
+		
+	# Process data to vector tiles, using default parameters for Tippecanoe if not specified
+	else
+		if [ -z "$tippecanoeparams" ]; then
+			tippecanoeparams="--name=${id} --layer=${id} --attribution='${source}' --maximum-zoom=13 --minimum-zoom=0 --drop-smallest-as-needed --simplification=10 --detect-shared-borders";
+		fi
+		tippecanoe --output-to-directory=$id "${tippecanoeparams}" --force $id.geojson
+		rm -rf "${OUTPUT}/${id}/"		# Remove existing directory if present from a previous run; this is done just before the move to minimise public unavailability
+		mv $id "${OUTPUT}/"
 	fi
-	tippecanoe --output-to-directory=$id "${tippecanoeparams}" --force $id.geojson
-	rm -rf "${OUTPUT}/${id}/"		# Remove existing directory if present from a previous run; this is done just before the move to minimise public unavailability
-	mv $id "${OUTPUT}/"
-	rm $id.geojson
 	
 done
 
