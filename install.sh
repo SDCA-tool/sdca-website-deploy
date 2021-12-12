@@ -161,5 +161,10 @@ if ! command -v mysqlx &> /dev/null ; then
 	mysql -u root -p"${rootmysqlpassword}" -e "GRANT SELECT ON sdca.* TO sdca@localhost;"
 fi
 
+# Install GDAL/OGR
+add-apt-repository -y ppa:ubuntugis/ppa
+apt-get update
+apt-get install -y gdal-bin
+
 # Build data
 su - sdca "${DIR}/build-data.sh"
