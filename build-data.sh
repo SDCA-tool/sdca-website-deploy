@@ -65,7 +65,10 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 	fi
 	
 	# Process data to the database; see options at: https://gdal.org/drivers/vector/mysql.html
-	ogr2ogr -f MySQL "MySQL:sdca,user=sdca,password=${sdcamysqlpassword}" $id.geojson -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
+	# To minimise unavailability, the data is loaded into a table suffixed with _import, and then when complete, shifted into place
+	ogr2ogr -f MySQL "MySQL:sdca,user=sdca,password=${sdcamysqlpassword}" $id.geojson -nln "${id}_import" -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
+	mysql -u sdca -p"${sdcamysqlpassword}" -e "DROP TABLE IF EXISTS \`$id\`;" sdca
+	mysql -u sdca -p"${sdcamysqlpassword}" -e "RENAME TABLE \`${id}_import\` TO \`$id\`;" sdca
 	
 	# Remove the downloaded GeoJSON file
 	rm $id.geojson
