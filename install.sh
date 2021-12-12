@@ -158,7 +158,7 @@ if ! command -v mysqlx &> /dev/null ; then
 	chown sdca.sdca /home/sdca/mysqlpassword
 	chmod 400 /home/sdca/mysqlpassword
 	mysql -u root -p"${rootmysqlpassword}" -e "CREATE USER IF NOT EXISTS sdca@localhost IDENTIFIED WITH mysql_native_password BY '${sdcamysqlpassword}';"
-	mysql -u root -p"${rootmysqlpassword}" -e "GRANT SELECT ON sdca.* TO sdca@localhost;"
+	mysql -u root -p"${rootmysqlpassword}" -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP ON sdca.* TO sdca@localhost;"
 fi
 
 # Install GDAL/OGR

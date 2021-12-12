@@ -25,6 +25,9 @@ echo 'This folder is safe to delete. See sdca-website-deploy repo: build-data.sh
 # Specify output data folder
 OUTPUT=$dataTarget
 
+# Get the MySQL password, for use by ogr2ogr
+sdcamysqlpassword=`cat /home/sdca/mysqlpassword`
+
 # Loop through datasets; see: https://unix.stackexchange.com/a/622269/168900
 # Data at: https://github.com/SDCA-tool/sdca-data/releases
 csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,source,source_url,tippecanoeparams,show $dataRepo/datasets.csv \
@@ -61,6 +64,11 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		mv $id "${OUTPUT}/"
 	fi
 	
+	# Process data to the database; see options at: https://gdal.org/drivers/vector/mysql.html
+	ogr2ogr -f MySQL "MySQL:sdca,user=sdca,password=${sdcamysqlpassword}" $id.geojson -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
+	
+	# Remove the downloaded GeoJSON file
+	rm $id.geojson
 done
 
 # Add dataset metadata as JSON file for website
