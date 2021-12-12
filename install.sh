@@ -34,6 +34,7 @@ service apache2 restart
 
 # MySQL
 apt-get install -y mysql-server
+apt-get install -y php-mysql
 
 # Tippecanoe, for tile generation; see: https://github.com/mapbox/tippecanoe
 apt-get install -y build-essential libsqlite3-dev zlib1g-dev
