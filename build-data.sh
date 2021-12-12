@@ -13,6 +13,9 @@ dataTarget=${2:-/var/www/sdca/data/}
 # Stop on any error
 set -e
 
+# Start timer
+start=`date +%s`
+
 # Get the list of datasets
 datasets=`csvtool col 2 $dataRepo/datasets.csv`
 
@@ -84,3 +87,11 @@ for file in $dataRepo/data_dictionary/*.csv; do
 done
 jq -n '[inputs | {(input_filename | gsub(".*/|\\.json$";"")): .} ] | add' $dataRepo/data_dictionary/*.json | cat > /var/www/sdca/sdca-website/fields.json
 rm $dataRepo/data_dictionary/*.json
+
+# Confirm success
+echo "Successfully completed."
+
+# End timer and report time
+end=`date +%s`
+seconds=$((end - start))
+echo "Elapsed: $(($seconds / 3600))hrs $((($seconds / 60) % 60))min $(($seconds % 60))sec"
