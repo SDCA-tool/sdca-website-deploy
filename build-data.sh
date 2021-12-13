@@ -55,7 +55,6 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 	# Skip vector tile creation for layers not to be shown
 	if [[ "$show" == 'FALSE' ]]; then
 		echo "Skipping vector tile creation of dataset ${id} as not shown"
-		continue
 		
 	# Process data to vector tiles, using default parameters for Tippecanoe if not specified
 	else
