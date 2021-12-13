@@ -16,6 +16,9 @@ set -e
 # Start timer
 start=`date +%s`
 
+# Create same PATH as sdca user
+source /etc/environment
+
 # Get the list of datasets
 datasets=`csvtool col 2 $dataRepo/datasets.csv`
 
