@@ -42,6 +42,12 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 	
 	echo -e "\n\nProcessing dataset ${id}:\n"
 	
+	# For now, skip GeoJSON files, pending support below
+	if [[ "$zipfile" != *"geojson"* ]]; then
+		echo "Skipping non-GeoJSON dataset ${id}"
+		continue
+	fi
+	
 	# # Download - public repo
 	# wget "https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
 	
