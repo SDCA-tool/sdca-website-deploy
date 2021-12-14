@@ -55,6 +55,9 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 	unzip $zipfile
 	rm $zipfile
 	
+	# Determine filename of unzipped file, e.g. foo.geojson.zip -> foo.geojson
+	file=$(basename "${zipfile}" .zip)
+	
 	# Skip vector tile creation for layers not to be shown
 	if [[ "$show" == 'FALSE' ]]; then
 		echo "Skipping vector tile creation of dataset ${id} as not shown"
@@ -64,19 +67,19 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		if [ -z "$tippecanoeparams" ]; then
 			tippecanoeparams="--name=${id} --layer=${id} --attribution='${source}' --maximum-zoom=13 --minimum-zoom=0 --drop-smallest-as-needed --simplification=10 --detect-shared-borders";
 		fi
-		tippecanoe --output-to-directory=$id "${tippecanoeparams}" --force $id.geojson
+		tippecanoe --output-to-directory=$id "${tippecanoeparams}" --force "${file}"
 		rm -rf "${OUTPUT}/${id}/"		# Remove existing directory if present from a previous run; this is done just before the move to minimise public unavailability
 		mv $id "${OUTPUT}/"
 	fi
 	
 	# Process data to the database; see options at: https://gdal.org/drivers/vector/mysql.html
 	# To minimise unavailability, the data is loaded into a table suffixed with _import, and then when complete, shifted into place
-	ogr2ogr -f MySQL "MySQL:sdca,user=sdca,password=${sdcamysqlpassword}" $id.geojson -nln "${id}_import" -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
+	ogr2ogr -f MySQL "MySQL:sdca,user=sdca,password=${sdcamysqlpassword}" ${file} -nln "${id}_import" -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
 	mysql -u sdca -p"${sdcamysqlpassword}" -e "DROP TABLE IF EXISTS \`$id\`;" sdca
 	mysql -u sdca -p"${sdcamysqlpassword}" -e "RENAME TABLE \`${id}_import\` TO \`$id\`;" sdca
 	
 	# Remove the downloaded GeoJSON file
-	rm $id.geojson
+	rm "${file}"
 done
 
 # Add dataset metadata as JSON file for website
