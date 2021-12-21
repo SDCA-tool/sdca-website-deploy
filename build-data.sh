@@ -36,9 +36,9 @@ sdcamysqlpassword=`cat /home/sdca/mysqlpassword`
 
 # Loop through datasets; see: https://unix.stackexchange.com/a/622269/168900
 # Data at: https://github.com/SDCA-tool/sdca-data/releases
-csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,source,source_url,tippecanoeparams,show $dataRepo/datasets.csv \
+csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,source,source_url,tippecanoeparams,show,database $dataRepo/datasets.csv \
  | csvtool -u '|' drop 1 - \
- | while IFS=$'|' read -r id zipfile title description geometries_type has_attributes source source_url tippecanoeparams show; do
+ | while IFS=$'|' read -r id zipfile title description geometries_type has_attributes source source_url tippecanoeparams show database; do
 	
 	echo -e "\n\nProcessing dataset ${id}:\n"
 	
@@ -78,11 +78,17 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		mv $id "${OUTPUT}/"
 	fi
 	
+	# Skip database import for layers not needing this
+	if [[ "$database" == 'FALSE' ]]; then
+		echo "Skipping database import of dataset ${id} as not needed"
+		
 	# Process data to the database; see options at: https://gdal.org/drivers/vector/mysql.html
 	# To minimise unavailability, the data is loaded into a table suffixed with _import, and then when complete, shifted into place
-	ogr2ogr -f MySQL "MySQL:sdca,user=sdca,password=${sdcamysqlpassword}" ${file} -nln "${id}_import" -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
-	mysql -u sdca -p"${sdcamysqlpassword}" -e "DROP TABLE IF EXISTS \`$id\`;" sdca
-	mysql -u sdca -p"${sdcamysqlpassword}" -e "RENAME TABLE \`${id}_import\` TO \`$id\`;" sdca
+	else
+		ogr2ogr -f MySQL "MySQL:sdca,user=sdca,password=${sdcamysqlpassword}" ${file} -nln "${id}_import" -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
+		mysql -u sdca -p"${sdcamysqlpassword}" -e "DROP TABLE IF EXISTS \`$id\`;" sdca
+		mysql -u sdca -p"${sdcamysqlpassword}" -e "RENAME TABLE \`${id}_import\` TO \`$id\`;" sdca
+	fi
 	
 	# Remove the downloaded GeoJSON file
 	rm "${file}"
