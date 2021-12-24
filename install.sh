@@ -176,5 +176,9 @@ sudo usermod -a -G sdca www-data
 service apache2 restart
 chmod g+r /home/sdca/mysqlpassword
 
+# Add locate
+apt-get install -y locate
+updatedb
+
 # Build data
 su - sdca "${DIR}/build-data.sh"
