@@ -167,5 +167,10 @@ add-apt-repository -y ppa:ubuntugis/ppa
 apt-get update
 apt-get install -y gdal-bin
 
+# Enable webserver to access SDCA account MySQL password
+sudo usermod -a -G sdca www-data
+service apache2 restart
+chmod g+r /home/sdca/mysqlpassword
+
 # Build data
 su - sdca "${DIR}/build-data.sh"
