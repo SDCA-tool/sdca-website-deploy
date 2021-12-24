@@ -169,7 +169,12 @@ apt-get install -y gdal-bin
 
 # Install R
 apt-get install -y r-base
-apt-get install -y build-essential
+apt-get install -y r-base-dev build-essential
+
+# Install R package; see: https://github.com/SDCA-tool/sdca-package
+apt-get install -y libssl-dev libcurl4-openssl-dev libxml2-dev
+R -e 'if (!require("remotes")) install.packages("remotes");'
+R -e 'if (!require("sdca-package")) remotes::install_github("SDCA-tool/sdca-package");'
 
 # Enable webserver to access SDCA account MySQL password
 sudo usermod -a -G sdca www-data
