@@ -167,6 +167,10 @@ add-apt-repository -y ppa:ubuntugis/ppa
 apt-get update
 apt-get install -y gdal-bin
 
+# Install R
+apt-get install -y r-base
+apt-get install -y build-essential
+
 # Enable webserver to access SDCA account MySQL password
 sudo usermod -a -G sdca www-data
 service apache2 restart
