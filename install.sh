@@ -103,6 +103,13 @@ if [ ! -d /var/www/sdca/sdca-data/ ]; then
 	chown -R sdca.rollout /var/www/sdca/sdca-data/ && chmod -R g+ws /var/www/sdca/sdca-data/
 fi
 
+# Add package repo
+if [ ! -d /var/www/sdca/sdca-package/ ]; then
+	cd /var/www/sdca/
+	git clone https://github.com/SDCA-tool/sdca-package.git
+	chown -R sdca.rollout /var/www/sdca/sdca-package/ && chmod -R g+ws /var/www/sdca/sdca-package/
+fi
+
 # Keep the repos updated
 cp /var/www/sdca/sdca-website-deploy/sdca.cron /etc/cron.d/sdca
 chown root.root /etc/cron.d/sdca && chmod 0600 /etc/cron.d/sdca
