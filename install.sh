@@ -89,18 +89,18 @@ if [ ! -d /var/www/sdca/sdca-website/ ]; then
 	chown -R sdca.rollout /var/www/sdca/sdca-website/ && chmod -R g+ws /var/www/sdca/sdca-website/
 fi
 
-# Add data repo
-if [ ! -d /var/www/sdca/sdca-data/ ]; then
-	cd /var/www/sdca/
-	git clone https://github.com/SDCA-tool/sdca-data.git
-	chown -R sdca.rollout /var/www/sdca/sdca-data/ && chmod -R g+ws /var/www/sdca/sdca-data/
-fi
-
 # Add library repo
 if [ ! -d /var/www/sdca/Mapboxgljs.LayerViewer/ ]; then
 	cd /var/www/sdca/
 	git clone https://github.com/cyclestreets/Mapboxgljs.LayerViewer.git
 	chown -R sdca.rollout /var/www/sdca/Mapboxgljs.LayerViewer/ && chmod -R g+ws /var/www/sdca/Mapboxgljs.LayerViewer/
+fi
+
+# Add data repo
+if [ ! -d /var/www/sdca/sdca-data/ ]; then
+	cd /var/www/sdca/
+	git clone https://github.com/SDCA-tool/sdca-data.git
+	chown -R sdca.rollout /var/www/sdca/sdca-data/ && chmod -R g+ws /var/www/sdca/sdca-data/
 fi
 
 # Keep the repos updated
