@@ -105,6 +105,9 @@ done
 jq -n '[inputs | {(input_filename | gsub(".*/|\\.json$";"")): .} ] | add' $dataRepo/data_dictionary/*.json | cat > /var/www/sdca/sdca-website/fields.json
 rm $dataRepo/data_dictionary/*.json
 
+# Add style definitions from each file as a (single) JSON file for website
+jq -n '[inputs | {(input_filename | gsub(".*/|\\.json$";"")): .} ] | add' $dataRepo/styles/*.json | cat > /var/www/sdca/sdca-website/styles.json
+
 # Confirm success
 echo "Successfully completed."
 
