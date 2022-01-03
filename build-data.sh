@@ -19,9 +19,6 @@ start=`date +%s`
 # Create same PATH as sdca user
 source /etc/environment
 
-# Get the list of datasets
-datasets=`csvtool col 2 $dataRepo/datasets.csv`
-
 # Do work in /tmp/
 rm -rf /tmp/sdca-data-importing/
 mkdir -p /tmp/sdca-data-importing/
