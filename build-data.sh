@@ -54,9 +54,6 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 	for (( i=0; i<$total; i++ )); do
 		zipfile=${zipfileList[$i]}
 		tippecanoeparams=${tippecanoeparamsList[$i]}
-		#echo $zipfile
-		#echo $tippecanoeparams
-
 		# Download - public repo
 		wget "https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
 		
@@ -77,8 +74,6 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 				tippecanoeparams="--name=${id} --layer=${id} --attribution='${source}' --maximum-zoom=13 --minimum-zoom=0 --drop-smallest-as-needed --simplification=10 --detect-shared-borders";
 			fi
 			eval "tippecanoe --output-to-directory=${id} ${tippecanoeparams} --force ${file}"
-			rm -rf "${OUTPUT}/${id}/"		# Remove existing directory if present from a previous run; this is done just before the move to minimise public unavailability
-			mv $id "${OUTPUT}/"
 		fi
 		
 		# Skip database import for layers not needing this
@@ -96,6 +91,12 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		# Remove the downloaded GeoJSON file
 		rm "${file}"
 	done
+	
+	# Move vector tiles files into place; this firstly removes existing live directory if present from a previous run; this is done just before the move to minimise public unavailability
+	if [[ "$show" != 'FALSE' ]]; then
+		rm -rf "${OUTPUT}/${id}/"
+		mv $id "${OUTPUT}/"
+	fi
 done
 
 # Add dataset metadata as JSON file for website
