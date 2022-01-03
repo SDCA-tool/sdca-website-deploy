@@ -73,7 +73,7 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		if [ -z "$tippecanoeparams" ]; then
 			tippecanoeparams="--name=${id} --layer=${id} --attribution='${source}' --maximum-zoom=13 --minimum-zoom=0 --drop-smallest-as-needed --simplification=10 --detect-shared-borders";
 		fi
-		tippecanoe --output-to-directory=$id "${tippecanoeparams}" --force "${file}"
+		eval "tippecanoe --output-to-directory=${id} ${tippecanoeparams} --force ${file}"
 		rm -rf "${OUTPUT}/${id}/"		# Remove existing directory if present from a previous run; this is done just before the move to minimise public unavailability
 		mv $id "${OUTPUT}/"
 	fi
