@@ -45,44 +45,57 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		continue
 	fi
 	
-	# Download - public repo
-	wget "https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
+	# Determine sets of zip files / tippecanoeparams (or one), by allocating to an array, and count the total; it is assumed that the counts are consistent
+	IFS=';' read -ra zipfileList <<< "$zipfile"
+	IFS=';' read -ra tippecanoeparamsList <<< "$tippecanoeparams"
+	total=${#zipfileList[@]}
 	
-	# Unzip
-	unzip $zipfile
-	rm $zipfile
-	
-	# Determine filename of unzipped file, e.g. foo.geojson.zip -> foo.geojson
-	file=$(basename "${zipfile}" .zip)
-	
-	# Skip vector tile creation for layers not to be shown
-	if [[ "$show" == 'FALSE' ]]; then
-		echo "Skipping vector tile creation of dataset ${id} as not shown"
+	# Loop through each, which may be 1
+	for (( i=0; i<$total; i++ )); do
+		zipfile=${zipfileList[$i]}
+		tippecanoeparams=${tippecanoeparamsList[$i]}
+		#echo $zipfile
+		#echo $tippecanoeparams
+
+		# Download - public repo
+		wget "https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
 		
-	# Process data to vector tiles, using default parameters for Tippecanoe if not specified
-	else
-		if [ -z "$tippecanoeparams" ]; then
-			tippecanoeparams="--name=${id} --layer=${id} --attribution='${source}' --maximum-zoom=13 --minimum-zoom=0 --drop-smallest-as-needed --simplification=10 --detect-shared-borders";
+		# Unzip
+		unzip $zipfile
+		rm $zipfile
+		
+		# Determine filename of unzipped file, e.g. foo.geojson.zip -> foo.geojson
+		file=$(basename "${zipfile}" .zip)
+		
+		# Skip vector tile creation for layers not to be shown
+		if [[ "$show" == 'FALSE' ]]; then
+			echo "Skipping vector tile creation of dataset ${id} as not shown"
+			
+		# Process data to vector tiles, using default parameters for Tippecanoe if not specified
+		else
+			if [ -z "$tippecanoeparams" ]; then
+				tippecanoeparams="--name=${id} --layer=${id} --attribution='${source}' --maximum-zoom=13 --minimum-zoom=0 --drop-smallest-as-needed --simplification=10 --detect-shared-borders";
+			fi
+			eval "tippecanoe --output-to-directory=${id} ${tippecanoeparams} --force ${file}"
+			rm -rf "${OUTPUT}/${id}/"		# Remove existing directory if present from a previous run; this is done just before the move to minimise public unavailability
+			mv $id "${OUTPUT}/"
 		fi
-		eval "tippecanoe --output-to-directory=${id} ${tippecanoeparams} --force ${file}"
-		rm -rf "${OUTPUT}/${id}/"		# Remove existing directory if present from a previous run; this is done just before the move to minimise public unavailability
-		mv $id "${OUTPUT}/"
-	fi
-	
-	# Skip database import for layers not needing this
-	if [[ "$database" == 'FALSE' ]]; then
-		echo "Skipping database import of dataset ${id} as not needed"
 		
-	# Process data to the database; see options at: https://gdal.org/drivers/vector/mysql.html
-	# To minimise unavailability, the data is loaded into a table suffixed with _import, and then when complete, shifted into place
-	else
-		ogr2ogr -f MySQL "MySQL:sdca,user=sdca,password=${sdcamysqlpassword}" ${file} -nln "${id}_import" -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
-		mysql -u sdca -p"${sdcamysqlpassword}" -e "DROP TABLE IF EXISTS \`$id\`;" sdca
-		mysql -u sdca -p"${sdcamysqlpassword}" -e "RENAME TABLE \`${id}_import\` TO \`$id\`;" sdca
-	fi
-	
-	# Remove the downloaded GeoJSON file
-	rm "${file}"
+		# Skip database import for layers not needing this
+		if [[ "$database" == 'FALSE' ]]; then
+			echo "Skipping database import of dataset ${id} as not needed"
+			
+		# Process data to the database; see options at: https://gdal.org/drivers/vector/mysql.html
+		# To minimise unavailability, the data is loaded into a table suffixed with _import, and then when complete, shifted into place
+		else
+			ogr2ogr -f MySQL "MySQL:sdca,user=sdca,password=${sdcamysqlpassword}" ${file} -nln "${id}_import" -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
+			mysql -u sdca -p"${sdcamysqlpassword}" -e "DROP TABLE IF EXISTS \`$id\`;" sdca
+			mysql -u sdca -p"${sdcamysqlpassword}" -e "RENAME TABLE \`${id}_import\` TO \`$id\`;" sdca
+		fi
+		
+		# Remove the downloaded GeoJSON file
+		rm "${file}"
+	done
 done
 
 # Add dataset metadata as JSON file for website
