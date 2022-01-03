@@ -45,14 +45,8 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		continue
 	fi
 	
-	# # Download - public repo
-	# wget "https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
-	
-	# Download - private repo, which requires use of the Github API; see: https://stackoverflow.com/a/51427434/180733 and https://stackoverflow.com/a/60061148/180733
-	# Requires environment variable, e.g. export GITHUB_CREDENTIALS=username:tokenstring
-	CURL="curl -u $GITHUB_CREDENTIALS https://api.github.com/repos/SDCA-tool/sdca-data/releases"
-	ASSET_ID=$(eval "$CURL/latest" | jq -r '.assets[] | select(.name=="'$zipfile'").id')
-	eval "$CURL/assets/$ASSET_ID -LJOH 'Accept: application/octet-stream'"
+	# Download - public repo
+	wget "https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
 	
 	# Unzip
 	unzip $zipfile
