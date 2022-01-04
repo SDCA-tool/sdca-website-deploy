@@ -179,8 +179,10 @@ apt-get install -y r-base
 apt-get install -y r-base-dev build-essential
 
 # Install R package; see: https://github.com/SDCA-tool/sdca-package
-apt-get install -y libssl-dev libcurl4-openssl-dev libxml2-dev
+apt-get install -y libssl-dev libcurl4-openssl-dev libxml2-dev libudunits2-dev libgdal-dev
 R -e 'if (!require("remotes")) install.packages("remotes");'
+R -e 'if (!require("units")) install.packages("units");'
+R -e 'if (!require("sf")) install.packages("sf");'
 R -e 'if (!require("sdca-package")) remotes::install_github("SDCA-tool/sdca-package");'
 
 # Enable webserver to access SDCA account MySQL password
