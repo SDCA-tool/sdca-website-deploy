@@ -48,6 +48,7 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 	# Determine sets of zip files / tippecanoeparams (or one), by allocating to an array, and count the total; it is assumed that the counts are consistent
 	IFS=';' read -ra zipfileList <<< "$zipfile"
 	IFS=';' read -ra tippecanoeparamsList <<< "$tippecanoeparams"
+	IFS=';' read -ra databaseList <<< "$database"
 	total=${#zipfileList[@]}
 	hasMultiple=$(( $total > 1 ))
 	
@@ -55,6 +56,7 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 	for (( i=0; i<$total; i++ )); do
 		zipfile=${zipfileList[$i]}
 		tippecanoeparams=${tippecanoeparamsList[$i]}
+		database=${databaseList[$i]}
 		
 		# Determine directory suffix, if any
 		if [ "$hasMultiple" = 1 ]; then suffix="_${i}"; else suffix=""; fi
