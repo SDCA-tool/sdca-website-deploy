@@ -49,11 +49,16 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 	IFS=';' read -ra zipfileList <<< "$zipfile"
 	IFS=';' read -ra tippecanoeparamsList <<< "$tippecanoeparams"
 	total=${#zipfileList[@]}
+	hasMultiple=$(( $total > 1 ))
 	
 	# Loop through each, which may be 1
 	for (( i=0; i<$total; i++ )); do
 		zipfile=${zipfileList[$i]}
 		tippecanoeparams=${tippecanoeparamsList[$i]}
+		
+		# Determine directory suffix, if any
+		if [ "$hasMultiple" = 1 ]; then suffix="_${i}"; else suffix=""; fi
+		
 		# Download - public repo
 		wget "https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
 		
@@ -73,7 +78,7 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 			if [ -z "$tippecanoeparams" ]; then
 				tippecanoeparams="--name=${id} --layer=${id} --attribution='${source}' --maximum-zoom=13 --minimum-zoom=0 --drop-smallest-as-needed --simplification=10 --detect-shared-borders";
 			fi
-			eval "tippecanoe --output-to-directory=${id} ${tippecanoeparams} --force ${file}"
+			eval "tippecanoe --output-to-directory=${id}${suffix} ${tippecanoeparams} --force ${file}"
 		fi
 		
 		# Skip database import for layers not needing this
@@ -92,9 +97,23 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		rm "${file}"
 	done
 	
-	# Move vector tiles files into place; this firstly removes existing live directory if present from a previous run; this is done just before the move to minimise public unavailability
+	# Move vector tiles files into place
 	if [[ "$show" != 'FALSE' ]]; then
+		
+		# If multiple parts, first combine suffixed folders to un-suffixed main folder
+		if [ "$hasMultiple" = 1 ]; then
+			mkdir "${id}"
+			for (( i=0; i<$total; i++ )); do
+				suffix="_${i}";
+				mv "${id}${suffix}/"* "${id}"
+				rmdir "${id}${suffix}/"
+			done
+		fi
+		
+		# Remove existing live directory if present from a previous run; this is done just before the move to minimise public unavailability
 		rm -rf "${OUTPUT}/${id}/"
+		
+		# Move file into place
 		mv $id "${OUTPUT}/"
 	fi
 done
