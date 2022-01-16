@@ -6,7 +6,7 @@
 0,15,30,45 *  * * *  sdca  cd /var/www/sdca/sdca-package/ && git pull --quiet
 
 # Update R package regularly
-0 2  * * *  root  R -e 'update.packages();'
+0 2  * * *  root  R -e 'remotes::install_github("SDCA-tool/sdca-package")'
 
 # Build the data regularly
 0 4  * * *  sdca  /var/www/sdca/sdca-website-deploy/build-data.sh
