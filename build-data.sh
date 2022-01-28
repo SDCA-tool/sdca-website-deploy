@@ -120,8 +120,20 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 	fi
 done
 
-# Add dataset metadata as JSON file for website
+# Create function to convert a CSV file to JSON
 csvToJson () { python -c 'import csv, json, sys; print(json.dumps([dict(r) for r in csv.DictReader(sys.stdin)], indent="\t"))'; }
+
+# Create function to convert a directory of CSV files to JSON
+csvDirectoryToJson () {
+	directory=$1
+	for file in $dataRepo/$directory/*.csv; do
+		mkdir -p /var/www/sdca/sdca-website/lexicon/$directory/
+		filename=`basename "${file}"`
+		cat $file | csvToJson | cat > "/var/www/sdca/sdca-website/lexicon/$directory/${filename%.csv}.json"
+	done
+}
+
+# Add dataset metadata as JSON file for website
 cat $dataRepo/datasets.csv | csvToJson | cat > /var/www/sdca/sdca-website/lexicon/datasets.json
 
 # Add field definitions from each file as a (single) JSON file for website
