@@ -128,11 +128,13 @@ cat $dataRepo/datasets.csv | csvToJson | cat > /var/www/sdca/sdca-website/lexico
 for file in $dataRepo/data_dictionary/*.csv; do
     cat $file | csvToJson | cat > "${file%.csv}.json"
 done
-jq -n '[inputs | {(input_filename | gsub(".*/|\\.json$";"")): .} ] | add' $dataRepo/data_dictionary/*.json | cat > /var/www/sdca/sdca-website/lexicon/fields.json
+mkdir -p /var/www/sdca/sdca-website/lexicon/data_dictionary/
+jq -n '[inputs | {(input_filename | gsub(".*/|\\.json$";"")): .} ] | add' $dataRepo/data_dictionary/*.json | cat > /var/www/sdca/sdca-website/lexicon/data_dictionary/fields.json
 rm $dataRepo/data_dictionary/*.json
 
 # Add style definitions from each file as a (single) JSON file for website, stripping any comment keys ("_comment": "...")
-jq -n '[inputs | {(input_filename | gsub(".*/|\\.json$";"")): .} ] | del(.. | ._comment?) | add' $dataRepo/styles/*.json | cat > /var/www/sdca/sdca-website/lexicon/styles.json
+mkdir -p /var/www/sdca/sdca-website/lexicon/styles/
+jq -n '[inputs | {(input_filename | gsub(".*/|\\.json$";"")): .} ] | del(.. | ._comment?) | add' $dataRepo/styles/*.json | cat > /var/www/sdca/sdca-website/lexicon/styles/styles.json
 
 # Confirm success
 echo "Successfully completed."
