@@ -148,6 +148,9 @@ rm $dataRepo/data_dictionary/*.json
 mkdir -p /var/www/sdca/sdca-website/lexicon/styles/
 jq -n '[inputs | {(input_filename | gsub(".*/|\\.json$";"")): .} ] | del(.. | ._comment?) | add' $dataRepo/styles/*.json | cat > /var/www/sdca/sdca-website/lexicon/styles/styles.json
 
+# Convert web text CSV files
+csvDirectoryToJson "web_text"
+
 # Confirm success
 echo "Successfully completed."
 
