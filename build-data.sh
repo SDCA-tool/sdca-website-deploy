@@ -39,12 +39,6 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 	
 	echo -e "\n\nProcessing dataset ${id}:\n"
 	
-	# For now, skip GeoJSON files, pending support below
-	if [[ "$zipfile" != *"geojson"* ]]; then
-		echo "Skipping non-GeoJSON dataset ${id}"
-		continue
-	fi
-	
 	# Determine sets of zip files / tippecanoeparams (or one), by allocating to an array, and count the total; it is assumed that the counts are consistent
 	IFS=';' read -ra zipfileList <<< "$zipfile"
 	IFS=';' read -ra tippecanoeparamsList <<< "$tippecanoeparams"
@@ -70,6 +64,13 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		
 		# Determine filename of unzipped file, e.g. foo.geojson.zip -> foo.geojson
 		file=$(basename "${zipfile}" .zip)
+		
+		# If a TIF file, merely move it into place
+		if [[ "$zipfile" == *".tif"* ]]; then
+			mkdir -p "${OUTPUT}/${id}/"
+			mv $file "${OUTPUT}/${id}/"
+			continue 2
+		fi
 		
 		# Skip vector tile creation for layers not to be shown
 		if [[ "$show" == 'FALSE' ]]; then
