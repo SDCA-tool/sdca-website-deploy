@@ -153,6 +153,9 @@ csvDirectoryToJson "data_tables"
 csvDirectoryToJson "package_files"
 csvDirectoryToJson "web_text"
 
+# Copy in example input for now
+cp -pr $dataRepo/example_r_input.json /var/www/sdca/sdca-website/lexicon/
+
 # Confirm success
 echo "Successfully completed."
 
