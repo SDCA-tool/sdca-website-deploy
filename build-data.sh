@@ -157,6 +157,13 @@ csvDirectoryToJson "web_text"
 # Copy in example input for now
 cp -pr $dataRepo/example_r_input.json /var/www/sdca/sdca-website/lexicon/
 
+# Put CSV data_tables files into database; see: https://stackoverflow.com/a/23532171/180733
+for file in $dataRepo/data_tables/*.csv; do
+	filename=`basename "${file}"`
+	table="${filename%.csv}"
+	csvsql --db mysql://sdca:$sdcamysqlpassword@localhost:3306/sdca --overwrite --tables $table --insert "${file}"
+done
+
 # Confirm success
 echo "Successfully completed."
 

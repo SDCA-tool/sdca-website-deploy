@@ -136,6 +136,11 @@ apt-get install -y jq
 apt-get install -y zip
 apt-get install -y python3 python-is-python3
 
+# CSV support for putting into MySQL; see: https://stackoverflow.com/a/23532171/180733 and https://stackoverflow.com/a/23978968/180733
+apt-get install -y csvkit
+apt-get install -y python3-pip
+pip install mysqlclient
+
 # Database
 if ! command -v mysqlx &> /dev/null ; then
 	
