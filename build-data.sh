@@ -164,6 +164,12 @@ for file in $dataRepo/data_tables/*.csv; do
 	csvsql --db mysql://sdca:$sdcamysqlpassword@localhost:3306/sdca --overwrite --tables $table --insert "${file}"
 done
 
+# Fix up desire lines table to add SRID = 0 equivalent geometry for now; may take 1-2 hours; see: https://github.com/SDCA-tool/sdca-website/commit/6a226b2af9be2a8931de5e70c65c65cd288bab56
+mysql -u sdca -p"${sdcamysqlpassword}" -e "ALTER TABLE desire_lines ADD geometrySrid0 GEOMETRY SRID 0 AFTER geometry;" sdca
+mysql -u sdca -p"${sdcamysqlpassword}" -e "UPDATE desire_lines SET geometrySrid0 = ST_GeomFromGeoJSON(ST_AsGeoJSON(geometry), 1, 0);" sdca
+mysql -u sdca -p"${sdcamysqlpassword}" -e "ALTER TABLE desire_lines CHANGE geometrySrid0 geometrySrid0 GEOMETRY SRID 0 NOT NULL;" sdca
+mysql -u sdca -p"${sdcamysqlpassword}" -e "ALTER TABLE desire_lines ADD SPATIAL(geometrySrid0);" sdca
+
 # Confirm success
 echo "Successfully completed."
 
