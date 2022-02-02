@@ -37,6 +37,13 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
  | csvtool -u '|' drop 1 - \
  | while IFS=$'|' read -r id zipfile title description geometries_type has_attributes source source_url tippecanoeparams show database category; do
 	
+	# Guard against empty lines; this is an essential check as otherwise $id will be empty and the built $dataTarget directory will get deleted
+	if [[ "$id" == "" ]]; then
+		echo "ERROR: datasets.csv has empty line. This must be fixed."
+		exit 1
+	fi
+	
+	# Narrate
 	echo -e "\n\nProcessing dataset ${id}:\n"
 	
 	# Determine sets of zip files / tippecanoeparams (or one), by allocating to an array, and count the total; it is assumed that the counts are consistent
