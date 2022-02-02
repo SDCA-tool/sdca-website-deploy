@@ -55,12 +55,24 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		# Determine directory suffix, if any
 		if [ "$hasMultiple" = 1 ]; then suffix="_${i}"; else suffix=""; fi
 		
+		# Set the download URL
+		downloadUrl="https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
+		
+		# Skip importing this file if it is the same; currently this compares the size
+		if [ -f "${OUTPUT}/${zipfile}" ]; then
+			localFileSize=`stat --printf="%s" "${OUTPUT}/$zipfile"`
+			remoteFileSize=`curl -LsIXGET "$downloadUrl" | grep content-length | tail -1 | awk '{print $2}' | tr -d "\r\n" | tr -d "\n"`
+			if [ $localFileSize == $remoteFileSize ]; then
+				echo "Skipping import of ${zipfile} as cached file is the same"
+				continue 2
+			fi
+		fi
+		
 		# Download - public repo
-		wget "https://github.com/SDCA-tool/sdca-data/releases/download/map_data/${zipfile}"
+		wget "$downloadUrl"
 		
 		# Unzip
 		unzip $zipfile
-		rm $zipfile
 		
 		# Determine filename of unzipped file, e.g. foo.geojson.zip -> foo.geojson
 		file=$(basename "${zipfile}" .zip)
@@ -69,6 +81,7 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		if [[ "$zipfile" == *".tif"* ]]; then
 			mkdir -p "${OUTPUT}/${id}/"
 			mv $file "${OUTPUT}/${id}/"
+			mv $zipfile "${OUTPUT}/"
 			continue 2
 		fi
 		
@@ -98,6 +111,9 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		
 		# Remove the downloaded GeoJSON file
 		rm "${file}"
+		
+		# Move the downloaded zip file into place
+		mv $zipfile "${OUTPUT}/"
 	done
 	
 	# Move vector tiles files into place
