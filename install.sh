@@ -180,6 +180,7 @@ apt-get update
 apt-get install -y gdal-bin
 
 # Install R
+#!# Upgrade to R v. 4: https://linuxize.com/post/how-to-install-r-on-ubuntu-20-04/
 apt-get install -y r-base
 apt-get install -y r-base-dev build-essential
 
