@@ -27,6 +27,7 @@ echo 'This folder is safe to delete. See sdca-website-deploy repo: build-data.sh
 
 # Specify output data folder
 OUTPUT=$dataTarget
+mkdir -p "${OUTPUT}"
 
 # Get the MySQL password, for use by ogr2ogr
 sdcamysqlpassword=`cat /home/sdca/mysqlpassword`
