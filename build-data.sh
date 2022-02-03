@@ -113,6 +113,16 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		# To minimise unavailability, the data is loaded into a table suffixed with _import, and then when complete, shifted into place
 		else
 			ogr2ogr -f MySQL "MySQL:sdca,user=sdca,password=${sdcamysqlpassword}" ${file} -nln "${id}_import" -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
+			
+			# Fix up desire lines table to add SRID = 0 equivalent geometry for now; may take 1-2 hours; see: https://github.com/SDCA-tool/sdca-website/commit/6a226b2af9be2a8931de5e70c65c65cd288bab56
+			if [[ "$id" == "desire_lines" ]]; then
+				mysql -u sdca -p"${sdcamysqlpassword}" -e "ALTER TABLE desire_lines_import ADD geometrySrid0 GEOMETRY SRID 0 AFTER geometry;" sdca
+				mysql -u sdca -p"${sdcamysqlpassword}" -e "UPDATE desire_lines_import SET geometrySrid0 = ST_GeomFromGeoJSON(ST_AsGeoJSON(geometry), 1, 0);" sdca
+				mysql -u sdca -p"${sdcamysqlpassword}" -e "ALTER TABLE desire_lines_import CHANGE geometrySrid0 geometrySrid0 GEOMETRY SRID 0 NOT NULL;" sdca
+				mysql -u sdca -p"${sdcamysqlpassword}" -e "ALTER TABLE desire_lines_import ADD SPATIAL(geometrySrid0);" sdca
+			fi
+			
+			# Shift the new table into place
 			mysql -u sdca -p"${sdcamysqlpassword}" -e "DROP TABLE IF EXISTS \`$id\`;" sdca
 			mysql -u sdca -p"${sdcamysqlpassword}" -e "RENAME TABLE \`${id}_import\` TO \`$id\`;" sdca
 		fi
@@ -187,12 +197,6 @@ for file in $dataRepo/data_tables/*.csv; do
 	table="${filename%.csv}"
 	csvsql --db mysql://sdca:$sdcamysqlpassword@localhost:3306/sdca --overwrite --tables $table --insert "${file}"
 done
-
-# Fix up desire lines table to add SRID = 0 equivalent geometry for now; may take 1-2 hours; see: https://github.com/SDCA-tool/sdca-website/commit/6a226b2af9be2a8931de5e70c65c65cd288bab56
-mysql -u sdca -p"${sdcamysqlpassword}" -e "ALTER TABLE desire_lines ADD geometrySrid0 GEOMETRY SRID 0 AFTER geometry;" sdca
-mysql -u sdca -p"${sdcamysqlpassword}" -e "UPDATE desire_lines SET geometrySrid0 = ST_GeomFromGeoJSON(ST_AsGeoJSON(geometry), 1, 0);" sdca
-mysql -u sdca -p"${sdcamysqlpassword}" -e "ALTER TABLE desire_lines CHANGE geometrySrid0 geometrySrid0 GEOMETRY SRID 0 NOT NULL;" sdca
-mysql -u sdca -p"${sdcamysqlpassword}" -e "ALTER TABLE desire_lines ADD SPATIAL(geometrySrid0);" sdca
 
 # Confirm success
 echo "Successfully completed."
