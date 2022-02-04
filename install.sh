@@ -17,8 +17,11 @@ set -e
 # Get the script directory see: https://stackoverflow.com/a/11114547/180733
 DIR=$(dirname $(realpath -s $0))
 
-# Update packages index
+# Update packages
 apt-get update
+apt-get -y upgrade
+apt-get -y dist-upgrade
+apt-get -y autoremove
 
 # Webserver
 apt-get install -y apache2
@@ -72,11 +75,6 @@ ufw allow http
 ufw allow https
 ufw reload
 ufw status verbose
-
-# Patch system
-apt-get -y upgrade
-apt-get -y dist-upgrade
-apt-get -y autoremove
 
 # Site main directory, into which repos will go
 mkdir -p /var/www/sdca/
