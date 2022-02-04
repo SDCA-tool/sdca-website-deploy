@@ -194,6 +194,16 @@ sudo usermod -a -G sdca www-data
 service apache2 restart
 chmod g+r /home/sdca/mysqlpassword
 
+# Exim; see: https://ubuntu.com/server/docs/mail-exim4 and https://manpages.ubuntu.com/manpages/jammy/en/man8/update-exim4.conf.8.html
+apt-get -y install exim4
+if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
+	cp -pr /etc/exim4/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf.original
+	sed -i "s/dc_eximconfig_configtype=.*/dc_eximconfig_configtype='internet'/" /etc/exim4/update-exim4.conf.conf
+	sed -i "s/dc_local_interfaces=.*/dc_local_interfaces=''/" /etc/exim4/update-exim4.conf.conf
+	update-exim4.conf
+	service exim4 restart
+fi
+
 # Add locate
 apt-get install -y locate
 updatedb
