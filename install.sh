@@ -135,9 +135,10 @@ apt-get install -y zip
 apt-get install -y python3 python-is-python3
 
 # CSV support for putting into MySQL; see: https://stackoverflow.com/a/23532171/180733 and https://stackoverflow.com/a/23978968/180733
-apt-get install -y csvkit
+# This is installed via pip, as the Ubuntu version is too old, with a critical bug fixed in 1.0.3
 apt-get install -y python3-pip
 pip install mysqlclient
+pip install "csvkit>=1.0.6"
 
 # Database
 if ! command -v mysqlx &> /dev/null ; then
