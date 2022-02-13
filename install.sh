@@ -134,12 +134,6 @@ apt-get install -y jq
 apt-get install -y zip
 apt-get install -y python3 python-is-python3
 
-# CSV support for putting into MySQL; see: https://stackoverflow.com/a/23532171/180733 and https://stackoverflow.com/a/23978968/180733
-# This is installed via pip, as the Ubuntu version is too old, with a critical bug fixed in 1.0.3
-apt-get install -y python3-pip
-pip install mysqlclient
-pip install "csvkit>=1.0.6"
-
 # Database
 if ! command -v mysqlx &> /dev/null ; then
 	
@@ -172,6 +166,12 @@ if ! command -v mysqlx &> /dev/null ; then
 	mysql -u root -p"${rootmysqlpassword}" -e "CREATE USER IF NOT EXISTS sdca@localhost IDENTIFIED WITH mysql_native_password BY '${sdcamysqlpassword}';"
 	mysql -u root -p"${rootmysqlpassword}" -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP ON sdca.* TO sdca@localhost;"
 fi
+
+# CSV support for putting into database; see: https://stackoverflow.com/a/23532171/180733 and https://stackoverflow.com/a/23978968/180733
+# This is installed via pip, as the Ubuntu version is too old, with a critical bug fixed in 1.0.3
+apt-get install -y python3-pip
+pip install mysqlclient
+pip install "csvkit>=1.0.6"
 
 # Install GDAL/OGR
 add-apt-repository -y ppa:ubuntugis/ppa
