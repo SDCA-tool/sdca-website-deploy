@@ -168,7 +168,7 @@ if ! command -v mysqlx &> /dev/null ; then
 	sdcamysqlpassword=`date +%s | sha256sum | base64 | head -c 32`
 	echo "${sdcamysqlpassword}" > /home/sdca/mysqlpassword
 	chown sdca.sdca /home/sdca/mysqlpassword
-	chmod 400 /home/sdca/mysqlpassword
+	chmod 440 /home/sdca/mysqlpassword		# Has to be group-readable by sdca group, which includes www-data
 	mysql -u root -p"${rootmysqlpassword}" -e "CREATE USER IF NOT EXISTS sdca@localhost IDENTIFIED WITH mysql_native_password BY '${sdcamysqlpassword}';"
 	mysql -u root -p"${rootmysqlpassword}" -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP ON sdca.* TO sdca@localhost;"
 fi
@@ -190,10 +190,9 @@ R -e 'if (!require("units")) install.packages("units");'
 R -e 'if (!require("sf")) install.packages("sf");'
 R -e 'if (!require("sdca-package")) remotes::install_github("SDCA-tool/sdca-package");'
 
-# Enable webserver to access SDCA account MySQL password
+# Include webserver in sdca group so it can access the database password
 sudo usermod -a -G sdca www-data
 service apache2 restart
-chmod g+r /home/sdca/mysqlpassword
 
 # Exim; see: https://ubuntu.com/server/docs/mail-exim4 and https://manpages.ubuntu.com/manpages/jammy/en/man8/update-exim4.conf.8.html
 apt-get -y install exim4
