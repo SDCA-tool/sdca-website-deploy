@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# Builds vector tile data for the site
-# See tutorial at: https://github.com/ITSLeeds/VectorTiles
-# See examples at: https://github.com/SDCA-tool/sdca-data-prep/blob/main/tippecanoe
+# Builds data for the site
+# Runs as sdca user
 
 
 # Can specify argument giving path to data repo; defaults as shown
@@ -98,6 +97,8 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 			echo "Skipping vector tile creation of dataset ${id} as not shown"
 			
 		# Process data to vector tiles, using default parameters for Tippecanoe if not specified
+		# See tutorial at: https://github.com/ITSLeeds/VectorTiles
+		# See examples at: https://github.com/SDCA-tool/sdca-data-prep/blob/main/tippecanoe
 		else
 			if [ -z "$tippecanoeparams" ]; then
 				tippecanoeparams="--name=${id} --layer=${id} --attribution='${source}' --maximum-zoom=13 --minimum-zoom=0 --drop-smallest-as-needed --simplification=10 --detect-shared-borders";
