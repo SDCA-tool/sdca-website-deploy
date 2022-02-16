@@ -187,6 +187,7 @@ jq -n '[inputs | {(input_filename | gsub(".*/|\\.json$";"")): .} ] | del(.. | ._
 # Convert other CSV files
 csvDirectoryToJson "data_tables"
 csvDirectoryToJson "package_files"
+csvDirectoryToJson "styles"
 csvDirectoryToJson "web_text"
 
 # Copy in example input for now
