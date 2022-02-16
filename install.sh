@@ -39,6 +39,14 @@ service apache2 restart
 apt-get install -y mysql-server
 apt-get install -y php-mysql
 
+# PostgreSQL & PostGIS packages
+apt-get install -y gnupg2
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list
+apt-get update
+apt-get install -y postgresql-14 postgis postgresql-14-postgis-3		# NB If updating version, change pg_hba.conf path below also
+apt-get install -y php-pgsql
+
 # Tippecanoe, for tile generation; see: https://github.com/mapbox/tippecanoe
 apt-get install -y build-essential libsqlite3-dev zlib1g-dev
 if ! which tippecanoe >/dev/null; then
@@ -157,10 +165,49 @@ if ! command -v mysqlx &> /dev/null ; then
 	mysql -u root -p"${rootmysqlpassword}" -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP ON sdca.* TO sdca@localhost;"
 fi
 
+# Install PostgreSQL database and user
+# Check connectivity using the following; -h localhost is needed to avoid "Peer authentication failed" error
+# PGPASSWORD=`sudo less /home/sdca/postgresqlpassword` psql -h localhost -d sdca -U sdca
+database=sdca
+username=sdca
+passwordfile="/home/${username}/postgresqlpassword"
+databaseExists=`sudo -u postgres psql -tAc "SELECT 1 from pg_catalog.pg_database where datname = '${database}';"`
+if [ "$databaseExists" != "1" ]; then
+	
+	# Create password
+	runtimepostgresqlpassword=`date +%s | sha256sum | base64 | head -c 32`
+	echo "${runtimepostgresqlpassword}" > $passwordfile
+	chown $username.$username $passwordfile
+	chmod 440 $passwordfile		# Has to be group-readable by the group, which includes www-data
+	
+	# Create runtime user
+	sudo -u postgres psql -c "CREATE USER ${username} WITH PASSWORD '${runtimepostgresqlpassword}';"
+	
+	# Create database
+	sudo -u postgres createdb -O $username $database
+	
+	# Privileges should not be needed: "By default all public schemas will be available for regular (non-superuser) users." - https://stackoverflow.com/a/42748915/180733
+	# See also note that privileges (if relevant) should be on the table, not the database: https://stackoverflow.com/a/15522548/180733
+	#sudo -u postgres psql -tAc "GRANT ALL PRIVILEGES ON DATABASE ${database} TO ${username};"
+	
+	# Add PostGIS to this database
+	sudo -u postgres psql -d $database -c "CREATE EXTENSION postgis;"
+	
+	# Can now connect using the -h localhost option; see: https://stackoverflow.com/a/28783632/180733
+	
+	# # Enable postgres connectivity, adding to the start of the file, with IPv4 and IPv6 rules
+	# if ! grep -q $username /etc/postgresql/14/main/pg_hba.conf; then
+	# 	sed -i "1 i\host  $database  $username  ::1/128       trust" /etc/postgresql/14/main/pg_hba.conf	# IPv6 rule, will end up as second line
+	# 	sed -i "1 i\host  $database  $username  127.0.0.1/32  trust" /etc/postgresql/14/main/pg_hba.conf	# IPv4 rule, will end up as first line
+	# fi
+	# sudo service postgresql restart
+fi
+
 # CSV support for putting into database; see: https://stackoverflow.com/a/23532171/180733 and https://stackoverflow.com/a/23978968/180733
 # This is installed via pip, as the Ubuntu version is too old, with a critical bug fixed in 1.0.3
 apt-get install -y python3-pip
 pip install mysqlclient
+pip install psycopg2
 pip install "csvkit>=1.0.6"
 
 # Install GDAL/OGR
@@ -203,6 +250,8 @@ updatedb
 # Add libdbi-perl as otherwise /usr/share/munin/plugins/mysql_ suggest will show missing DBI.pm; see: http://stackoverflow.com/questions/20568836/cant-locate-dbi-pm and https://github.com/munin-monitoring/munin/issues/713
 apt-get install -y libcache-perl libcache-cache-perl
 apt-get install -y libdbi-perl libdbd-mysql-perl
+# PostgreSQL dependency
+apt-get install -y libdbd-pg-perl
 apt-get install -y munin-node
 apt-get install -y munin-plugins-extra
 munin-node-configure --suggest --shell | sh
