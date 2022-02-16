@@ -114,6 +114,7 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 		# To minimise unavailability, the data is loaded into a table suffixed with _import, and then when complete, shifted into place
 		else
 			ogr2ogr -f MySQL "MySQL:sdca,user=sdca,password=${sdcamysqlpassword}" ${file} -nln "${id}_import" -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
+			ogr2ogr -f PostgreSQL PG:dbname=sdca ${file} -nln "${id}_import" -t_srs EPSG:4326 -update -lco OVERWRITE=yes -lco FID=id -lco GEOMETRY_NAME=geometry -progress
 			
 			# Fix up desire lines table to add SRID = 0 equivalent geometry for now; may take 1-2 hours; see: https://github.com/SDCA-tool/sdca-website/commit/6a226b2af9be2a8931de5e70c65c65cd288bab56
 			if [[ "$id" == "desire_lines" ]]; then
@@ -126,6 +127,10 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 			# Shift the new table into place
 			mysql -u sdca -p"${sdcamysqlpassword}" -e "DROP TABLE IF EXISTS \`$id\`;" sdca
 			mysql -u sdca -p"${sdcamysqlpassword}" -e "RENAME TABLE \`${id}_import\` TO \`$id\`;" sdca
+			psql -c "DROP TABLE IF EXISTS ${id};"
+			psql -c "ALTER TABLE ${id}_import RENAME TO ${id};"
+			psql -c "ALTER INDEX ${id}_import_pkey RENAME TO ${id}_pkey;"
+			psql -c "ALTER INDEX ${id}_import_geometry_geom_idx RENAME TO ${id}_geometry_geom_idx;"
 		fi
 		
 		# Remove the downloaded GeoJSON file
@@ -198,6 +203,7 @@ for file in $dataRepo/data_tables/*.csv; do
 	filename=`basename "${file}"`
 	table="${filename%.csv}"
 	csvsql --db mysql://sdca:$sdcamysqlpassword@localhost:3306/sdca --overwrite --tables $table --insert "${file}"
+	csvsql --db postgresql:///sdca --overwrite --tables $table --insert "${file}"
 done
 
 # Confirm success
