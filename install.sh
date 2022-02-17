@@ -257,5 +257,7 @@ apt-get install -y munin-plugins-extra
 munin-node-configure --suggest --shell | sh
 service munin-node restart
 
+#!# NB Currently no means to write the .config.js file automatically, as that contains secrets
+
 # Build data
 su - sdca "${DIR}/build-data.sh"
