@@ -36,7 +36,7 @@ It:
    * The [website repository](https://github.com/SDCA-tool/sdca-website/), which contains the website code
    * A javascript dependency
    * The [data repo](https://github.com/SDCA-tool/sdca-data/), which defines the source data and other definitions
-   * The [R package repo] (https://github.com/SDCA-tool/sdca-package/), which contains the analysis processing, though the R package is actually installed directly so this is not strictly needed
+   * The [R package repo](https://github.com/SDCA-tool/sdca-package/), which contains the analysis processing, though the R package is actually installed directly so this is not strictly needed
  * Adds cron jobs to keep all the repositories updated
  * Makes a VirtualHost for the site within Apache, including an HTTPS certificate
  * Installs some tools for processing CSV files
@@ -75,7 +75,7 @@ The script:
   * Other folders like `/data_tables/*.csv` become e.g. `/lexicon/data_tables/*.json` in the webspace, again used by the website UI
  * CSV data_tables files are copied into the database, which the SQL queries then use
 
-Note that if the data file on Github is detected as being the same size as previously, this is assumed to be unchanged, and that dataset is skipped.
+Note that if the data file to be downloaded from Github is detected as being the same size as previously, this is assumed to be unchanged, and that dataset is skipped. This is done by checking the size using a HEAD request first.
 
 To avoid any downtime, each dataset is processed one-by-one, and when moving the generated data into place (whether vector, database, or TIF). The data is finalised as a new copy with a different name, and then a quick shifting operation moves the old version out and the new one in. This is necessary because some datasets are very large and could take perhaps an hour to process.
 
@@ -92,7 +92,7 @@ If a kernel update is included, this should be caught with a restart:
 
 `sudo shutdown -r now`
 
-In the future, new versions of PostGIS may be released. If it is desired to upgrade the version number, careful attention should be given to the release notes. In some cases this may mean exporting and re-importing the data, though this is probably best done by just running the build script to generate the data freshly.
+In the future, new versions of PostGIS may be released. If it is desired to upgrade to a later full version, careful attention should be given to the release notes. In some cases this may mean exporting and re-importing the data, though this is probably best done by just running the build script to generate the data freshly.
 
 
 
