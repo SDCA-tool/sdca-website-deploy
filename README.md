@@ -84,6 +84,10 @@ To avoid any downtime, each dataset is processed one-by-one, and when moving the
 
 The site should not require any maintenance, other than to patch the Linux packages from time to time.
 
+It is advisible to patch at least monthly, and whenever a major security issue (for the Linux kernel, Apache, PHP, PostgreSQL or R) is issued.
+
+Log in to a server instance is by SSH key as per the cloud-init user definitions.
+
 Patching an Ubuntu machine is done using:
 
 `sudo apt-get update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade && sudo apt-get -y autoremove`
@@ -94,5 +98,11 @@ If a kernel update is included, this should be caught with a restart:
 
 In the future, new versions of PostGIS may be released. If it is desired to upgrade to a later full version, careful attention should be given to the release notes. In some cases this may mean exporting and re-importing the data, though this is probably best done by just running the build script to generate the data freshly.
 
+The system will not send out any e-mails routinely.
 
 
+## Security
+
+The server should remain secure as long as it is kept patched regularly.
+
+The site is entirely read-only, as there is no user-submitted data. Uploading of GeoJSON schemes is done purely client-side and does not result in any data written to the server. Accordingly, routes for denial of service attacks are very limited.
