@@ -17,6 +17,17 @@ To create a VM using Multipass, with name sdca, run:
 multipass launch -n sdca --cloud-init cloud-config.yaml 20.04
 ```
 
+To create a VM on Google Cloud, run:
+
+```
+gcloud compute instances create sdca \
+	--zone=europe-west2-a \
+	--machine-type=n1-standard-2 \
+	--image-project=ubuntu-os-cloud \
+	--image-family=ubuntu-2004-lts \
+	--metadata-from-file user-data=cloud-config.yaml
+```
+
 The `cloud-config.yaml` file (1) creates a set of users (you can add your own), (2) clones this repo as a whole, and (3) runs the `install.sh` bash script, which installs the software. All this takes place non-interactively.
 
 
