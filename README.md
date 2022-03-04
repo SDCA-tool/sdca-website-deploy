@@ -11,6 +11,8 @@ A complete installation can be created on a fully-automated basis, using this re
 
 A [cloud-init](https://cloud-init.io/) file at `cloud-config.yaml` is used to boostrap the application. Cloud-init is supported on most cloud hosting platforms. It provides a set of initial instructions that will be run during initial creation of the VM.
 
+The `cloud-config.yaml` file in summary (1) creates a set of users (you can add your own), (2) clones this repo as a whole, and (3) runs the `install.sh` bash script, which installs the software. All this takes place non-interactively.
+
 To create a VM using Multipass, with name sdca, run:
 
 ```
@@ -28,7 +30,7 @@ gcloud compute instances create sdca \
 	--metadata-from-file user-data=cloud-config.yaml
 ```
 
-The `cloud-config.yaml` file (1) creates a set of users (you can add your own), (2) clones this repo as a whole, and (3) runs the `install.sh` bash script, which installs the software. All this takes place non-interactively.
+A similar command can be run for any other cloud provider (e.g. Microsoft Azure, AWS, Mythic Beasts) that supports the cloud-init standard.
 
 Initial software setup takes up to half an hour, and building the data for the first time may take 4 hours or so.
 
