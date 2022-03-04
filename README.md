@@ -37,6 +37,8 @@ Initial software setup takes up to half an hour, and building the data for the f
 
 ## Installation script - install.sh bash script
 
+The cloud-init installer launches the install script. (However, the install script can be run manually also if desired.)
+
 The `install.sh` script is a bash script that does most of the installation. At present this is written in bash, but future work could migrate this to Ansible/Chef/etc.
 
 It is written to be idempotent, i.e. can be re-run safely.
