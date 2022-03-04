@@ -34,6 +34,8 @@ A similar command can be run for any other cloud provider (e.g. Microsoft Azure,
 
 Initial software setup takes up to half an hour, and building the data for the first time may take 4 hours or so.
 
+A diagram of the site architecture is below.
+
 
 ## Installation script - install.sh bash script
 
@@ -123,3 +125,8 @@ The system will not send out any e-mails routinely.
 The server should remain secure as long as it is kept patched regularly.
 
 The site is entirely read-only, as there is no user-submitted data. Uploading of GeoJSON schemes is done purely client-side and does not result in any data written to the server. Accordingly, routes for denial of service attacks are very limited.
+
+
+## Site architecture diagram
+
+![Site architecture diagram](/architecture.png)
