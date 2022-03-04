@@ -30,6 +30,8 @@ gcloud compute instances create sdca \
 
 The `cloud-config.yaml` file (1) creates a set of users (you can add your own), (2) clones this repo as a whole, and (3) runs the `install.sh` bash script, which installs the software. All this takes place non-interactively.
 
+Initial software setup takes up to half an hour, and building the data for the first time may take 4 hours or so.
+
 
 ## Installation script - install.sh bash script
 
