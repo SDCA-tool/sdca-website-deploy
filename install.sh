@@ -23,6 +23,12 @@ apt-get -y upgrade
 apt-get -y dist-upgrade
 apt-get -y autoremove
 
+# Enable unattended upgrades; see: https://wiki.debian.org/UnattendedUpgrades
+apt-get install -y unattended-upgrades apt-listchanges
+echo -e "\nUnattended-Upgrade::Mail \"root\";\n" >> /etc/apt/apt.conf.d/50unattended-upgrades
+echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections
+dpkg-reconfigure -f noninteractive unattended-upgrades
+
 # Webserver
 apt-get install -y apache2
 a2enmod ssl
