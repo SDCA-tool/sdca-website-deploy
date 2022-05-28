@@ -88,6 +88,7 @@ chown sdca.rollout /var/www/sdca/ && chmod g+ws /var/www/sdca/
 if [ ! -d /var/www/sdca/sdca-website/ ]; then
 	cd /var/www/sdca/
 	git clone https://github.com/SDCA-tool/sdca-website.git
+	git config --global --add safe.directory /var/www/sdca/sdca-website/
 	chown -R sdca.rollout /var/www/sdca/sdca-website/ && chmod -R g+ws /var/www/sdca/sdca-website/
 fi
 
@@ -95,6 +96,7 @@ fi
 if [ ! -d /var/www/sdca/Mapboxgljs.LayerViewer/ ]; then
 	cd /var/www/sdca/
 	git clone https://github.com/cyclestreets/Mapboxgljs.LayerViewer.git
+	git config --global --add safe.directory /var/www/sdca/Mapboxgljs.LayerViewer/
 	chown -R sdca.rollout /var/www/sdca/Mapboxgljs.LayerViewer/ && chmod -R g+ws /var/www/sdca/Mapboxgljs.LayerViewer/
 fi
 
@@ -102,6 +104,7 @@ fi
 if [ ! -d /var/www/sdca/sdca-data/ ]; then
 	cd /var/www/sdca/
 	git clone https://github.com/SDCA-tool/sdca-data.git
+	git config --global --add safe.directory /var/www/sdca/sdca-data/
 	chown -R sdca.rollout /var/www/sdca/sdca-data/ && chmod -R g+ws /var/www/sdca/sdca-data/
 fi
 
@@ -109,6 +112,7 @@ fi
 if [ ! -d /var/www/sdca/sdca-package/ ]; then
 	cd /var/www/sdca/
 	git clone https://github.com/SDCA-tool/sdca-package.git
+	git config --global --add safe.directory /var/www/sdca/sdca-package/
 	chown -R sdca.rollout /var/www/sdca/sdca-package/ && chmod -R g+ws /var/www/sdca/sdca-package/
 fi
 
