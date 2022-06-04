@@ -53,6 +53,17 @@ apt-get update
 apt-get install -y postgresql-14 postgis postgresql-14-postgis-3		# NB If updating version, change pg_hba.conf path below also
 apt-get install -y php-pgsql
 
+# Node - later version than v. 8.10.0 which is supplied with Ubuntu 18.04
+apt-get install -y curl
+curl -sL https://deb.nodesource.com/setup_16.x | bash -
+apt-get install -y nodejs
+
+# Yarn, for JS package management; see: https://www.howtoforge.com/how-to-install-yarn-npm-package-manager-on-ubuntu-20-04/
+curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+apt-get update
+apt-get install -y yarn
+
 # Tippecanoe, for tile generation; see: https://github.com/mapbox/tippecanoe
 apt-get install -y build-essential libsqlite3-dev zlib1g-dev
 if ! which tippecanoe >/dev/null; then
