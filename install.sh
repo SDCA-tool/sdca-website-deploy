@@ -29,6 +29,19 @@ echo -e "\nUnattended-Upgrade::Mail \"root\";\n" >> /etc/apt/apt.conf.d/50unatte
 echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections
 dpkg-reconfigure -f noninteractive unattended-upgrades
 
+# Exim mail; see: https://ubuntu.com/server/docs/mail-exim4 and https://manpages.ubuntu.com/manpages/jammy/en/man8/update-exim4.conf.8.html
+apt-get -y install exim4
+if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
+	cp -pr /etc/exim4/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf.original
+	sed -i "s/dc_eximconfig_configtype=.*/dc_eximconfig_configtype='internet'/" /etc/exim4/update-exim4.conf.conf
+	sed -i "s/dc_local_interfaces=.*/dc_local_interfaces=''/" /etc/exim4/update-exim4.conf.conf
+	update-exim4.conf
+	service exim4 restart
+fi
+
+# Set e-mail for notifications below; this is split her to avoid bot scraping
+email='webmaster''@''carbon.place'
+
 # Webserver
 apt-get install -y apache2
 a2enmod ssl
@@ -131,12 +144,16 @@ chown root.root /etc/cron.d/sdca && chmod 0600 /etc/cron.d/sdca
 mkdir -p /var/www/sdca/data/
 chown -R sdca.rollout /var/www/sdca/data/ && chmod -R g+ws /var/www/sdca/data/
 
+# Create .htpassword file for site protection
+sitepassword=`date +%s | sha256sum | base64 | head -c 32`
+htpasswd -b -B -c /etc/apache2/sites-enabled/sdca.htpasswd sdca $sitepassword
+mail -s 'SDCA Carbon Tool website login' $email <<< "Initial site password is as follows - please log in to change it in .htaccess: $sitepassword"
+
 # VirtualHosts - enable HTTP site, add SSL cert, enable HTTPS site
 cp "${DIR}/apache-sdca.conf" /etc/apache2/sites-available/sdca.conf
 cp "${DIR}/apache-sdca_ssl.conf" /etc/apache2/sites-available/sdca_ssl.conf
 a2ensite sdca.conf
 service apache2 restart
-email='webmaster''@''carbon.place'		# Split in script to prevent bots
 certbot --agree-tos --no-eff-email certonly --keep-until-expiring --webroot -w /var/www/sdca/sdca-website/ --email $email -d dev.carbon.place
 a2ensite sdca_ssl.conf
 service apache2 restart
@@ -247,16 +264,6 @@ R -e 'if (!require("sdca-package")) remotes::install_github("SDCA-tool/sdca-pack
 # Include webserver in sdca group so it can access the database password
 sudo usermod -a -G sdca www-data
 service apache2 restart
-
-# Exim; see: https://ubuntu.com/server/docs/mail-exim4 and https://manpages.ubuntu.com/manpages/jammy/en/man8/update-exim4.conf.8.html
-apt-get -y install exim4
-if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
-	cp -pr /etc/exim4/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf.original
-	sed -i "s/dc_eximconfig_configtype=.*/dc_eximconfig_configtype='internet'/" /etc/exim4/update-exim4.conf.conf
-	sed -i "s/dc_local_interfaces=.*/dc_local_interfaces=''/" /etc/exim4/update-exim4.conf.conf
-	update-exim4.conf
-	service exim4 restart
-fi
 
 # Add locate
 apt-get install -y locate
