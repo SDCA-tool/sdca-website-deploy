@@ -241,6 +241,10 @@ if [ "$databaseExists" != "1" ]; then
 	# sudo service postgresql restart
 fi
 
+# Include webserver in sdca group so it can access the database password
+sudo usermod -a -G sdca www-data
+service apache2 restart
+
 # CSV support for putting into database; see: https://stackoverflow.com/a/23532171/180733 and https://stackoverflow.com/a/23978968/180733
 # This is installed via pip, as the Ubuntu version is too old, with a critical bug fixed in 1.0.3
 apt-get install -y python3-pip
@@ -266,10 +270,6 @@ R -e 'if (!require("remotes")) install.packages("remotes");'
 R -e 'if (!require("units")) install.packages("units");'
 R -e 'if (!require("sf")) install.packages("sf");'
 R -e 'if (!require("sdca-package")) remotes::install_github("SDCA-tool/sdca-package");'
-
-# Include webserver in sdca group so it can access the database password
-sudo usermod -a -G sdca www-data
-service apache2 restart
 
 # Add locate
 apt-get install -y locate
