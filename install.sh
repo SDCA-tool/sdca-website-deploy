@@ -149,14 +149,21 @@ sitepassword=`date +%s | sha256sum | base64 | head -c 32`
 htpasswd -b -B -c /etc/apache2/sites-enabled/sdca.htpasswd sdca $sitepassword
 mail -s 'SDCA Carbon Tool website login' $email <<< "Initial site password is as follows - please log in to change it in .htaccess: $sitepassword"
 
-# VirtualHosts - enable HTTP site, add SSL cert, enable HTTPS site
+# VirtualHosts - enable HTTP site
 cp "${DIR}/apache-sdca.conf" /etc/apache2/sites-available/sdca.conf
-cp "${DIR}/apache-sdca_ssl.conf" /etc/apache2/sites-available/sdca_ssl.conf
 a2ensite sdca.conf
 service apache2 restart
+
+# VirtualHosts - attempt to add SSL cert and enable HTTPS site
+# This section will naturally fail if DNS is not pointed to machine (hence use of set +e temporarily), and will need to be run subsequently
+cp "${DIR}/apache-sdca_ssl.conf" /etc/apache2/sites-available/sdca_ssl.conf
+set +e
 certbot --agree-tos --no-eff-email certonly --keep-until-expiring --webroot -w /var/www/sdca/sdca-website/ --email $email -d dev.carbon.place
-a2ensite sdca_ssl.conf
-service apache2 restart
+if [ $? -eq 0 ]; then
+	a2ensite sdca_ssl.conf
+	service apache2 restart
+fi
+set -e
 
 # Add packages for helping download and process datasets
 # CSV support for use in scripts; see: https://colin.maudry.fr/csvtool-manual-page/ and install instructions for Ubuntu/MacOS at https://thinkinginsoftware.blogspot.com/2018/03/parsing-csv-from-bash.html
