@@ -180,7 +180,7 @@ if ! command -v mysqlx &> /dev/null ; then
 	apt-get install -y mysql-server mysql-client
 	
 	# Set the root user password
-	mysqlpassword=`date +%s | sha256sum | base64 | head -c 32`
+	rootmysqlpassword=`date +%s | sha256sum | base64 | head -c 32`A@!
 	echo "${rootmysqlpassword}" > /root/mysqlpassword
 	chmod 400 /root/mysqlpassword
 	mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${rootmysqlpassword}';"
@@ -188,17 +188,14 @@ if ! command -v mysqlx &> /dev/null ; then
 	# Secure the installation
 	mysql_secure_installation -u root --password="${rootmysqlpassword}" --use-default
 	
-	# Disable MySQL password expiry system; see: http://stackoverflow.com/a/41552022
+	# Disable MySQL password expiry system; see: https://stackoverflow.com/a/41552022
 	mysql -u root -p"${rootmysqlpassword}" -e "SET GLOBAL default_password_lifetime = 0;"
-	
-	# Amend MySQL password validation as passwords will already be complex
-	mysql -u root -p"${rootmysqlpassword}" -e "SET GLOBAL validate_password.special_char_count = 0;"
 	
 	# Create database
 	mysql -u root -p"${rootmysqlpassword}" -e "CREATE DATABASE IF NOT EXISTS sdca;"
 	
 	# Create runtime user
-	sdcamysqlpassword=`date +%s | sha256sum | base64 | head -c 32`
+	sdcamysqlpassword=`date +%s | sha256sum | base64 | head -c 32`A@!
 	echo "${sdcamysqlpassword}" > /home/sdca/mysqlpassword
 	chown sdca.sdca /home/sdca/mysqlpassword
 	chmod 440 /home/sdca/mysqlpassword		# Has to be group-readable by sdca group, which includes www-data
