@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Installs the system software
 # Written for Ubuntu Server 20.04 LTS
@@ -25,7 +25,7 @@ apt-get -y autoremove
 
 # Enable unattended upgrades; see: https://wiki.debian.org/UnattendedUpgrades
 apt-get install -y unattended-upgrades apt-listchanges
-echo -e "\nUnattended-Upgrade::Mail \"root\";\n" >> /etc/apt/apt.conf.d/50unattended-upgrades
+printf "\nUnattended-Upgrade::Mail \"root\";\n" >> /etc/apt/apt.conf.d/50unattended-upgrades
 echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections
 dpkg-reconfigure -f noninteractive unattended-upgrades
 
