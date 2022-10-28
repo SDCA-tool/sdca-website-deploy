@@ -54,11 +54,11 @@ apt-get install -y php php-cli php-mbstring
 apt-get install -y libapache2-mod-php
 service apache2 restart
 
-# MySQL
-apt-get install -y mysql-server
+# MySQL; configuration is done later below
+apt-get install -y mysql-server mysql-client
 apt-get install -y php-mysql
 
-# PostgreSQL & PostGIS packages
+# PostgreSQL & PostGIS packages; configuration is done later below
 apt-get install -y gnupg2
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 echo "deb https://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list
@@ -176,13 +176,10 @@ apt-get install -y jq
 apt-get install -y zip
 apt-get install -y python3 python-is-python3
 
-# Database
-if ! command -v mysql &> /dev/null ; then
+# Configure MySQL Database and create database and user
+if [ ! -f /root/mysqlpassword ]; then
 	
-	# Install MySQL 8, non-interactively
-	apt-get install -y mysql-server mysql-client
-	
-	# Set the root user password
+	# Create root password
 	rootmysqlpassword=`date +%s | sha256sum | base64 | head -c 32`A@!
 	echo "${rootmysqlpassword}" > /root/mysqlpassword
 	chmod 400 /root/mysqlpassword
