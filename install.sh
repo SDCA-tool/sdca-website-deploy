@@ -244,7 +244,9 @@ fi
 # CSV support for putting into database; see: https://stackoverflow.com/a/23532171/180733 and https://stackoverflow.com/a/23978968/180733
 # This is installed via pip, as the Ubuntu version is too old, with a critical bug fixed in 1.0.3
 apt-get install -y python3-pip
+apt-get install -y libmysqlclient-dev
 pip install mysqlclient
+apt-get install -y libpq-dev
 pip install psycopg2
 pip install "csvkit>=1.0.6"
 
