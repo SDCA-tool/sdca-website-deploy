@@ -136,6 +136,9 @@ fi
 cd /var/www/sdca/sdca-website/
 yarn install
 
+# Copy in the Javascript config file
+cp "${DIR}/.config.js" /var/www/sdca/sdca-website/
+
 # Keep the repos updated
 cp /var/www/sdca/sdca-website-deploy/sdca.cron /etc/cron.d/sdca
 chown root.root /etc/cron.d/sdca && chmod 0600 /etc/cron.d/sdca
