@@ -47,5 +47,5 @@ runcmd:
  - su --login sdca -c "git config --global --add safe.directory /var/www/sdca/sdca-website-deploy"
  - su --login sdca -c "git config -f /var/www/sdca/sdca-website-deploy/.git/config core.sharedRepository group"
 
- # Run the installer
- - /var/www/sdca/sdca-website-deploy/install.sh
+ # Run the installer; HOME so that root doesn't fail on git clone
+ - export HOME=/root/ && /var/www/sdca/sdca-website-deploy/install.sh
