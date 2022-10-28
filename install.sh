@@ -174,7 +174,7 @@ apt-get install -y zip
 apt-get install -y python3 python-is-python3
 
 # Database
-if ! command -v mysqlx &> /dev/null ; then
+if ! command -v mysql &> /dev/null ; then
 	
 	# Install MySQL 8, non-interactively
 	apt-get install -y mysql-server mysql-client
