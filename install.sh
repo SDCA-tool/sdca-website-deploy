@@ -61,7 +61,7 @@ apt-get install -y php-mysql
 # PostgreSQL & PostGIS packages
 apt-get install -y gnupg2
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list
+echo "deb https://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list
 apt-get update
 apt-get install -y postgresql-14 postgis postgresql-14-postgis-3		# NB If updating version, change pg_hba.conf path below also
 apt-get install -y php-pgsql
@@ -277,7 +277,7 @@ updatedb
 
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 # Include dependencies for Munin MySQL plugins; see: https://raymii.org/s/snippets/Munin-Fix-MySQL-Plugin-on-Ubuntu-12.04.html
-# Add libdbi-perl as otherwise /usr/share/munin/plugins/mysql_ suggest will show missing DBI.pm; see: http://stackoverflow.com/questions/20568836/cant-locate-dbi-pm and https://github.com/munin-monitoring/munin/issues/713
+# Add libdbi-perl as otherwise /usr/share/munin/plugins/mysql_ suggest will show missing DBI.pm; see: https://stackoverflow.com/questions/20568836/cant-locate-dbi-pm and https://github.com/munin-monitoring/munin/issues/713
 apt-get install -y libcache-perl libcache-cache-perl
 apt-get install -y libdbi-perl libdbd-mysql-perl
 # PostgreSQL dependency
