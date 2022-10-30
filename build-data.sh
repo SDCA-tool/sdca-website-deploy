@@ -127,7 +127,7 @@ csvtool namedcol id,zipfile,title,description,geometries_type,has_attributes,sou
 			# Shift the new table into place
 			mysql -u sdca -p"${sdcamysqlpassword}" -e "DROP TABLE IF EXISTS \`$id\`;" sdca
 			mysql -u sdca -p"${sdcamysqlpassword}" -e "RENAME TABLE \`${id}_import\` TO \`$id\`;" sdca
-			psql -c "DROP TABLE IF EXISTS ${id};"
+			psql -c "DROP TABLE IF EXISTS ${id};"		# Can generate: 'NOTICE:  table "..." does not exist, skipping'
 			psql -c "ALTER TABLE ${id}_import RENAME TO ${id};"
 			psql -c "ALTER INDEX ${id}_import_pkey RENAME TO ${id}_pkey;"
 			psql -c "ALTER INDEX ${id}_import_geometry_geom_idx RENAME TO ${id}_geometry_geom_idx;"
