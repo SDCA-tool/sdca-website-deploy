@@ -203,7 +203,7 @@ for file in $dataRepo/data_tables/*.csv; do
 	filename=`basename "${file}"`
 	table="${filename%.csv}"
 	csvsql --db mysql://sdca:$sdcamysqlpassword@localhost:3306/sdca --overwrite --tables $table --insert "${file}"
-	csvsql --db postgresql:///sdca --overwrite --tables $table --insert "${file}"
+	sudo -u sdca csvsql --db postgresql:///sdca --overwrite --tables $table --insert "${file}"
 done
 
 # Confirm success
