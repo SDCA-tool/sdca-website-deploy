@@ -180,7 +180,7 @@ apt-get install -y python3 python-is-python3
 if [ ! -f /root/mysqlpassword ]; then
 	
 	# Create root password
-	rootmysqlpassword=`date +%s | sha256sum | base64 | head -c 32`A@!
+	rootmysqlpassword=`date +%s | sha256sum | base64 | head -c 32`A_!
 	echo "${rootmysqlpassword}" > /root/mysqlpassword
 	chmod 400 /root/mysqlpassword
 	mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${rootmysqlpassword}';"
@@ -195,7 +195,7 @@ if [ ! -f /root/mysqlpassword ]; then
 	mysql -u root -p"${rootmysqlpassword}" -e "CREATE DATABASE IF NOT EXISTS sdca;"
 	
 	# Create runtime user
-	sdcamysqlpassword=`date +%s | sha256sum | base64 | head -c 32`A@!
+	sdcamysqlpassword=`date +%s | sha256sum | base64 | head -c 32`A_!
 	echo "${sdcamysqlpassword}" > /home/sdca/mysqlpassword
 	chown sdca.sdca /home/sdca/mysqlpassword
 	chmod 440 /home/sdca/mysqlpassword		# Has to be group-readable by sdca group, which includes www-data
