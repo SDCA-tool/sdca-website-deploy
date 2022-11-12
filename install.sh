@@ -161,7 +161,7 @@ service apache2 restart
 # This section will naturally fail if DNS is not pointed to machine (hence use of set +e temporarily), and will need to be run subsequently
 cp "${DIR}/apache-sdca_ssl.conf" /etc/apache2/sites-available/sdca_ssl.conf
 set +e
-certbot --agree-tos --no-eff-email certonly --keep-until-expiring --webroot -w /var/www/sdca/sdca-website/ --email $email -d dev.carbon.place
+certbot --agree-tos --no-eff-email certonly --keep-until-expiring --webroot -w /var/www/sdca/sdca-website/ --email $email -d sdca.carbon.place -d dev.carbon.place
 if [ $? -eq 0 ]; then
 	a2ensite sdca_ssl.conf
 	service apache2 restart
