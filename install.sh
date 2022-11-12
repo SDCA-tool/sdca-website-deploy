@@ -139,10 +139,6 @@ yarn install
 # Copy in the Javascript config file
 cp "${DIR}/.config.js" /var/www/sdca/sdca-website/
 
-# Keep the repos updated
-cp /var/www/sdca/sdca-website-deploy/sdca.cron /etc/cron.d/sdca
-chown root.root /etc/cron.d/sdca && chmod 0600 /etc/cron.d/sdca
-
 # Add data directory
 mkdir -p /var/www/sdca/data/
 chown -R sdca.rollout /var/www/sdca/data/ && chmod -R g+ws /var/www/sdca/data/
@@ -291,3 +287,8 @@ service munin-node restart
 
 # Build data
 su - sdca "${DIR}/build-data.sh"
+
+# Keep the repos and data updated
+cp /var/www/sdca/sdca-website-deploy/sdca.cron /etc/cron.d/sdca
+chown root.root /etc/cron.d/sdca && chmod 0600 /etc/cron.d/sdca
+
