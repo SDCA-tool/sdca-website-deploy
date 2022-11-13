@@ -23,18 +23,45 @@ To create a VM on Google Cloud, run:
 
 ```
 gcloud compute instances create sdca \
-	--zone=europe-west2-a \
-	--machine-type=n1-standard-2 \
+	--service-account=YOUR_SERVICE_ACCOUNT \
+	--project=YOUR_PROJECT_ID \
+	--zone=europe-west2-c \
+	--machine-type=e2-standard-2 \
 	--image-project=ubuntu-os-cloud \
 	--image-family=ubuntu-2004-lts \
+	--boot-disk-type=pd-ssd \
+	--boot-disk-size=40GB \
+	--tags=http-server,https-server \
 	--metadata-from-file user-data=cloud-config.yaml
 ```
 
 A similar command can be run for any other cloud provider (e.g. Microsoft Azure, AWS, Mythic Beasts) that supports the cloud-init standard.
 
-Initial software setup takes up to half an hour, and building the data for the first time may take 4 hours or so.
+Initial software setup takes up to half an hour, and building the data for the first time may take 6 hours or so. Subsequent data builds will be much quicker as they will only process new datasets.
 
 A diagram of the site architecture is below.
+
+If you have not pointed the DNS name to the server during the installation, you will need to create the SSL cert using:
+
+```
+email=webmaster@example.com
+sudo certbot --agree-tos --no-eff-email certonly --keep-until-expiring --webroot -w /var/www/sdca/sdca-website/ --email $email -d sdca.carbon.place -d dev.carbon.place
+sudo a2ensite sdca_ssl.conf
+sudo service apache2 restart
+```
+
+You will need to add your API keys to the config file, as these are not stored publicly in this repository:
+
+```
+sudo pico /var/www/sdca/sdca-website/.config.js
+```
+
+You will also want to set a real password for the site, as this is currently auto-generated:
+
+```
+mypassword=example
+sudo htpasswd -b -B -c /etc/apache2/sites-enabled/sdca.htpasswd sdca $mypassword
+```
 
 
 ## Installation script - install.sh bash script
