@@ -16,7 +16,7 @@ The `cloud-config.yaml` file in summary (1) creates a set of users (you can add 
 To create a VM using Multipass, with name sdca, run:
 
 ```
-multipass launch -n sdca --cloud-init cloud-config.yaml 20.04
+multipass launch -n sdca --cloud-init cloud-config.yaml 22.04
 ```
 
 To create a VM on Google Cloud, run:
@@ -28,7 +28,7 @@ gcloud compute instances create sdca \
 	--zone=europe-west2-c \
 	--machine-type=e2-standard-2 \
 	--image-project=ubuntu-os-cloud \
-	--image-family=ubuntu-2004-lts \
+	--image-family=ubuntu-2204-lts \
 	--boot-disk-type=pd-ssd \
 	--boot-disk-size=40GB \
 	--tags=http-server,https-server \
@@ -36,6 +36,12 @@ gcloud compute instances create sdca \
 ```
 
 A similar command can be run for any other cloud provider (e.g. Microsoft Azure, AWS, Mythic Beasts) that supports the cloud-init standard.
+
+You can follow installation progress using:
+
+```
+sudo tail -f /var/log/cloud-init-output.log
+```
 
 Initial software setup takes up to half an hour, and building the data for the first time may take 6 hours or so. Subsequent data builds will be much quicker as they will only process new datasets.
 

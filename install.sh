@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Installs the system software
-# Written for Ubuntu Server 20.04 LTS
+# Written for Ubuntu Server 22.04 LTS
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 
@@ -39,7 +39,7 @@ if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
 	service exim4 restart
 fi
 
-# Set e-mail for notifications below; this is split her to avoid bot scraping
+# Set e-mail for notifications below; this is split here to avoid bot scraping
 email='webmaster''@''carbon.place'
 
 # Webserver
@@ -59,23 +59,14 @@ apt-get install -y mysql-server mysql-client
 apt-get install -y php-mysql
 
 # PostgreSQL & PostGIS packages; configuration is done later below
-apt-get install -y gnupg2
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-echo "deb https://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list
-apt-get update
 apt-get install -y postgresql-14 postgis postgresql-14-postgis-3		# NB If updating version, change pg_hba.conf path below also
 apt-get install -y php-pgsql
 
-# Node - later version than v. 8.10.0 which is supplied with Ubuntu 18.04
-apt-get install -y curl
-curl -sL https://deb.nodesource.com/setup_16.x | bash -
-apt-get install -y nodejs
+# Node.js
+apt-get install -y nodejs npm
 
-# Yarn, for JS package management; see: https://www.howtoforge.com/how-to-install-yarn-npm-package-manager-on-ubuntu-20-04/
-curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-apt-get update
-apt-get install -y yarn
+# Yarn, for JS package management
+npm install --global yarn
 
 # Tippecanoe, for tile generation; see: https://github.com/mapbox/tippecanoe
 apt-get install -y build-essential libsqlite3-dev zlib1g-dev
@@ -251,12 +242,9 @@ pip install psycopg2
 pip install "csvkit>=1.0.6"
 
 # Install GDAL/OGR
-add-apt-repository -y ppa:ubuntugis/ppa
-apt-get update
 apt-get install -y gdal-bin
 
 # Install R
-#!# Upgrade to R v. 4: https://linuxize.com/post/how-to-install-r-on-ubuntu-20-04/
 apt-get install -y r-base
 apt-get install -y r-base-dev build-essential
 
