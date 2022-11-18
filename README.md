@@ -51,7 +51,7 @@ If you have not pointed the DNS name to the server during the installation, you 
 
 ```
 email=webmaster@example.com
-sudo certbot --agree-tos --no-eff-email certonly --keep-until-expiring --webroot -w /var/www/sdca/sdca-website/ --email $email -d sdca.carbon.place -d dev.carbon.place
+sudo certbot --agree-tos --no-eff-email certonly --keep-until-expiring --webroot -w /var/www/sdca/sdca-website/ --email $email -d sdca.carbon.place
 sudo a2ensite sdca_ssl.conf
 sudo service apache2 restart
 ```
