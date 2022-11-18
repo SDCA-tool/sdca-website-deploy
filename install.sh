@@ -47,6 +47,7 @@ apt-get install -y apache2
 a2enmod ssl
 a2enmod rewrite
 a2enmod headers
+a2disconf javascript-common
 apt-get install -y certbot
 
 # PHP
