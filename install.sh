@@ -75,12 +75,12 @@ apt-get install -y nodejs npm
 # Yarn, for JS package management
 npm install --global yarn
 
-# Tippecanoe, for tile generation; see: https://github.com/mapbox/tippecanoe
+# Tippecanoe, for tile generation; see: https://github.com/felt/tippecanoe
 apt-get install -y build-essential libsqlite3-dev zlib1g-dev
 if ! which tippecanoe >/dev/null; then
 	echo 'Installing tippecanoe'
 	cd /tmp/
-	git clone https://github.com/mapbox/tippecanoe.git
+	git clone https://github.com/felt/tippecanoe.git
 	cd tippecanoe
 	make -j
 	make install
