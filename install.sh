@@ -47,7 +47,11 @@ apt-get install -y apache2
 a2enmod ssl
 a2enmod rewrite
 a2enmod headers
-a2disconf javascript-common
+if dpkg -l | grep -q javascript-common; then
+    a2disconf javascript-common
+else
+    echo "javascript-common package is not installed."
+fi
 apt-get install -y certbot
 
 # PHP
