@@ -60,6 +60,8 @@ apt-get install -y libapache2-mod-php
 service apache2 restart
 
 # MySQL; configuration is done later below
+apt-get install -y libmysqlclient-dev
+apt-get install -y pkg-config
 apt-get install -y mysql-server mysql-client
 apt-get install -y php-mysql
 
